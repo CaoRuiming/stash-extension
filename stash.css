@@ -1,0 +1,25 @@
+html, body {
+  width: 200px;
+  margin: 0;
+  padding: 0;
+}
+
+.action-choice {
+  width: 100%;
+  padding: 4px;
+  font-size: 1.5em;
+  text-align: center;
+  cursor: pointer;
+}
+
+button, button:focus{
+  outline: none;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+button:active{
+  outline: none;
+  background: transparent;
+  border: 1px solid grey;
+}

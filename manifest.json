@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Stash",
+  "version": "1.0",
+  "description": "Stashes URLs for later.",
+  "icons": {
+    "48": "icon.svg",
+    "96": "icon.svg"
+  },
+  "action": {
+    "browser_style": true,
+    "default_popup": "stash.html",
+    "default_icon": "icon.svg"
+  },
+  "permissions": [
+    "storage",
+    "notifications",
+    "tabs",
+    "downloads"
+  ]
+}
