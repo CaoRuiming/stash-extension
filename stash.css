@@ -3,6 +3,11 @@
   --hover-bg-color: hsl(0, 0%, 90%);
   --card-bg-color: hsl(0, 0%, 96%);
   --border-color: hsl(0, 0%, 60%);
+  --faint-border-color: hsl(0, 0%, 80%);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 html, body {
@@ -12,7 +17,7 @@ html, body {
 
 .hr {
   width: 100%;
-  border-top: 1px solid hsl(0, 0%, 10%);
+  border-top: 2px solid hsl(0, 0%, 10%);
   margin: 4px 0;
 }
 
@@ -28,6 +33,14 @@ button:active{
   outline: none;
   background: transparent;
   border: 1px solid var(--border-color);
+}
+
+input {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 4px;
+  font-size: 1.5em;
+  border: 1px solid var(--faint-border-color);
 }
 
 .action-choice {

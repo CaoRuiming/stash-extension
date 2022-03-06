@@ -11,6 +11,10 @@ interface CreateElementOptions {
    */
   content?: (Node | string) | (Node | string)[];
   onClick?: () => void;
+  /**
+   * Ignored for non-form elements.
+   */
+  onSubmit?: (e: Event) => void;
   attributes?: Record<string, string>;
 }
 
@@ -25,7 +29,7 @@ export function create<K extends keyof HTMLElementTagNameMap>(
   options: CreateElementOptions = {},
 ): HTMLElementTagNameMap[K] {
   const element: HTMLElementTagNameMap[K] = document.createElement(tag);
-  const { id, classes, content, onClick, attributes } = options;
+  const { id, classes, content, onClick, onSubmit, attributes } = options;
 
   if (content) {
     arrify(content)
@@ -35,6 +39,7 @@ export function create<K extends keyof HTMLElementTagNameMap>(
   if (id) { element.setAttribute("id", id); }
   if (classes) { element.classList.add(...arrify(classes)); }
   if (onClick) { element.addEventListener("click", onClick); }
+  if (onSubmit && tag === "form") { element.addEventListener("submit", onSubmit); }
   if (attributes) {
     Object.entries(attributes).forEach(([k, v]) => element.setAttribute(k, v));
   }

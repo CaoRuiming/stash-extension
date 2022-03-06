@@ -1,4 +1,5 @@
 import { create } from "./Dom.js";
+import SettingsService, { Settings } from "./SettingsService.js";
 import StashService from "./StashService.js";
 import { getUrl, notify } from "./Util.js";
 
@@ -30,8 +31,9 @@ export const stashImportButton: HTMLButtonElement = create("button", {
   content: "Stash Import",
   classes: "action-choice",
   onClick: () => {
-    if (fileInput.value) {
-      StashService.stashImport(fileInput);
+    const file: (File | undefined) = fileInput?.files?.[0];
+    if (file) {
+      StashService.stashImport(file);
     } else {
       alert("Please select a file to import.");
     }
@@ -42,6 +44,21 @@ export const stashExportButton: HTMLButtonElement = create("button", {
   content: "Stash Export",
   classes: "action-choice",
   onClick: StashService.stashExport,
+});
+
+export const stashBatchSizeButton: HTMLButtonElement = create("button", {
+  content: "Set Stash Batch Size",
+  classes: "action-choice",
+  onClick: async () => {
+    const settings: Settings = await SettingsService.getSettings();
+    const newBatchSize = parseInt(stashBatchSizeInput.value);
+    if (!newBatchSize || newBatchSize < 1) {
+      notify("Invalid batch size provided.");
+    } else {
+      await SettingsService.saveSettings({ ...settings, batchSize: newBatchSize });
+      notify("Batch size updated!");
+    }
+  },
 });
 
 export const stashClearButton: HTMLButtonElement = create("button", {
@@ -66,3 +83,10 @@ export const batchNumberInput: HTMLInputElement = create("input", {
 export const stashBumpInput: HTMLInputElement = create("input", {
   attributes: { "type": "number", "step": "1", "placeholder": "Amount to bump", "value": "5" },
 });
+
+export const stashBatchSizeInput: HTMLInputElement = create("input", {
+  attributes: { "type": "number", "min": "1", "step": "1", "placeholder": "Batch size" },
+});
+(async () => {
+  stashBatchSizeInput.value = (await SettingsService.getSettings()).batchSize.toString();
+})();

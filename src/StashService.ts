@@ -1,3 +1,4 @@
+import SettingsService from "./SettingsService.js";
 import { notify, downloadBlob, getTextFromFile, isUrl, getBatchEndUrl } from "./Util.js";
 
 /**
@@ -96,7 +97,7 @@ export default class StashService {
 
     let urlsToOpen: string[];
     if (batch && batch > 0) {
-      const batchSize = 40;
+      const batchSize: number = (await SettingsService.getSettings()).batchSize;
       urlsToOpen = stash
         .slice((batch - 1) * batchSize, batch * batchSize)
         .filter(isUrl);
@@ -120,18 +121,16 @@ export default class StashService {
   /**
    * Reads a user-provided text file and overwrites the current Stash with the
    * contents of the import.
+   * @param file Text file containing newline-separated urls to import.
    */
-  static async stashImport(inputElement: HTMLInputElement): Promise<void> {
-    const file: (File | undefined) = inputElement?.files?.[0];
-    if (file) {
-      const fileContent: string = await getTextFromFile(file);
-      const importedStash: Stash = fileContent.split("\n").filter(isUrl);
-      if (importedStash.length > 0) {
-        await StashService.saveStash(importedStash);
-        notify("Import successful!");
-      } else {
-        notify("Import failed: empty import");
-      }
+  static async stashImport(file: File): Promise<void> {
+    const fileContent: string = await getTextFromFile(file);
+    const importedStash: Stash = fileContent.split("\n").filter(isUrl);
+    if (importedStash.length > 0) {
+      await StashService.saveStash(importedStash);
+      notify("Import successful!");
+    } else {
+      notify("Import failed: empty import");
     }
   }
 

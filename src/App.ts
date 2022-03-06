@@ -10,6 +10,8 @@ import {
   stashBumpInput,
   stashBumpButton,
   stashClearButton,
+  stashBatchSizeInput,
+  stashBatchSizeButton,
 } from "./Elements.js";
 import StashService from "./StashService.js";
 
@@ -33,7 +35,11 @@ if (body.id === "popup-page") {
       content: [
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Import Stash" }), fileInput, stashImportButton],
+          content: [
+            create("h2", { content: "Import Stash" }),
+            fileInput,
+            stashImportButton,
+          ],
         }),
         create("div", {
           classes: "option-card",
@@ -42,6 +48,14 @@ if (body.id === "popup-page") {
         create("div", {
           classes: "option-card",
           content: [create("h2", { content: "Clear Stash" }), stashClearButton],
+        }),
+        create("div", {
+          classes: "option-card",
+          content: [
+            create("h2", { content: "Set Stash Size" }),
+            stashBatchSizeInput,
+            stashBatchSizeButton,
+          ],
         }),
       ],
     }),

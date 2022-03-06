@@ -67,11 +67,15 @@ export function notify(message: string): void {
 export async function downloadBlob(blob: Blob, filename = "Stash.txt"): Promise<void> {
   const url = URL.createObjectURL(blob);
   const params: chrome.downloads.DownloadOptions = { url, filename, saveAs: true };
-  await new Promise(resolve => chrome.downloads.download(params, downloadId => {
+  await new Promise((resolve, reject) => chrome.downloads.download(params, downloadId => {
     chrome.downloads.onChanged.addListener(delta => {
-      if (delta.id === downloadId && delta.state?.current === "complete") {
-        URL.revokeObjectURL(url);
-        resolve(true);
+      if (delta.id === downloadId) {
+        if (delta.state?.current === "complete") {
+          URL.revokeObjectURL(url);
+          resolve(true);
+        } else if (delta.error) {
+          reject(delta.error.current);
+        }
       }
     });
   }));
