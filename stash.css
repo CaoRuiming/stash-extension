@@ -1,7 +1,39 @@
+:root {
+  --primary-bg-color: hsl(0, 0%, 98%);
+  --hover-bg-color: hsl(0, 0%, 90%);
+  --card-bg-color: hsl(0, 0%, 96%);
+  --border-color: hsl(0, 0%, 60%);
+}
+
 html, body {
+  background-color: var(--primary-bg-color);
+  text-align: center;
+}
+
+#popup-page {
   width: 200px;
   margin: 0;
   padding: 0;
+}
+
+.option-card-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.option-card {
+  width: 300px;
+  height: 300px;
+  padding: 20px;
+  margin: 20px;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.hr {
+  width: 100%;
+  border-top: 1px solid hsl(0, 0%, 10%);
+  margin: 4px 0;
 }
 
 .action-choice {
@@ -9,17 +41,18 @@ html, body {
   padding: 4px;
   font-size: 1.5em;
   text-align: center;
-  cursor: pointer;
+  background-color: var(--primary-bg-color);
 }
 
-button, button:focus{
+button {
   outline: none;
-  background: transparent;
   border: 1px solid transparent;
 }
-
+button:hover {
+  background-color: var(--hover-bg-color);
+}
 button:active{
   outline: none;
   background: transparent;
-  border: 1px solid grey;
+  border: 1px solid var(--border-color);
 }
