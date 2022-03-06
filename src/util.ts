@@ -14,7 +14,7 @@ export function arrify<T>(x: T | T[]): T[] {
  */
 export async function getUrl(): Promise<string> {
   const { url } = (await chrome.tabs.query({ currentWindow: true, active: true }))[0];
-  return sanitizeUrl(url || '');
+  return sanitizeUrl(url || "");
 }
 
 /**
@@ -24,7 +24,7 @@ export async function getUrl(): Promise<string> {
  * @returns URL to batch end page.
  */
 export function getBatchEndUrl(batch: number): string {
-  return '/html/batchEnd.html?batch=' + batch;
+  return "/html/batchEnd.html?batch=" + batch;
 }
 
 /**
@@ -34,7 +34,7 @@ export function getBatchEndUrl(batch: number): string {
  */
 export function sanitizeUrl(url: string): string {
   const matches: (RegExpMatchArray | null) = url.match(/^([^?]*)\??/);
-  return matches ? matches[1] : '';
+  return matches ? matches[1] : "";
 }
 
 /**
@@ -47,8 +47,7 @@ export function isUrl(str: string): boolean {
   if (!str) {
     return false;
   }
-  const regex: RegExp = /^https?:\/\/.*/;
-  return regex.test(str);
+  return (/^https?:\/\/.*/).test(str);
 }
 
 /**
@@ -56,7 +55,7 @@ export function isUrl(str: string): boolean {
  * @param message Message to include in notification.
  */
 export function notify(message: string): void {
-  chrome.notifications.create({ type: 'basic', title: 'Stash', message, iconUrl: '/icon.svg' });
+  chrome.notifications.create({ type: "basic", title: "Stash", message, iconUrl: "/icon.svg" });
 }
 
 /**
@@ -65,12 +64,12 @@ export function notify(message: string): void {
  * @param blob Blob to download.
  * @param filename Suggested name of downloaded file. Defaults to 'Stash.txt'.
  */
-export async function downloadBlob(blob: Blob, filename: string = 'Stash.txt'): Promise<void> {
+export async function downloadBlob(blob: Blob, filename = "Stash.txt"): Promise<void> {
   const url = URL.createObjectURL(blob);
   const params: chrome.downloads.DownloadOptions = { url, filename, saveAs: true };
   await new Promise(resolve => chrome.downloads.download(params, downloadId => {
     chrome.downloads.onChanged.addListener(delta => {
-      if (delta.id === downloadId && delta.state?.current === 'complete') {
+      if (delta.id === downloadId && delta.state?.current === "complete") {
         URL.revokeObjectURL(url);
         resolve(true);
       }
@@ -86,7 +85,7 @@ export async function downloadBlob(blob: Blob, filename: string = 'Stash.txt'): 
 export function getTextFromFile(file: File): Promise<string> {
   return new Promise<string>(resolve => {
     const reader = new FileReader();
-    reader.addEventListener('load', () => resolve((<string | null> reader.result) || ''), false);
+    reader.addEventListener("load", () => resolve((<string | null> reader.result) || ""), false);
     reader.readAsText(file);
   });
 }
