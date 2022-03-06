@@ -42,18 +42,35 @@ export default class StashService {
   /**
    * Removes the URL of the active tab in the current window to the Stash. Does
    * nothing if the current URL is not already in the Stash.
+   * 
+   * This method actually "blanks out" the removed url so that the indices of 
+   * the other urls in the Stash are not impacted. stashOpen will automatically 
+   * skip Stash items and periodically remove empty items from the Stash.
    */
   static async stashRemove(): Promise<void> {
     const url: string = await getUrl();
     const stash: Stash = await StashService.getStash();
-    StashService.saveStash(stash.filter(x => x !== url));
+    // "Blank out" the removed url so that the indices of the other urls in the
+    // Stash are not impacted. stashOpen will automatically skip Stash items
+    // that are not URLs.
+    StashService.saveStash(stash.map(x => x === url ? "" : x));
     notify('Remove successful!');
   }
 
   /**
-   * Opens all URLs in the Stash as new tabs in the current window.
+   * Given a batch number, opens subset of the URLs in the Stash. If no batch
+   * number is specified, this method opens all urls in the Stash. If the batch
+   * number is 1, this method first cleans up the Stash by removing invalid
+   * entries (which could have been introduced by stashRemove). Invalid entries
+   * are always skipped by this method.
+   * @param batch Batch number to open from the Stash.
    */
   static async stashOpen(batch?: number): Promise<void> {
+    if (!batch || batch === 1) {
+      const stash: Stash = await StashService.getStash();
+      await StashService.saveStash(stash.filter(isUrl));
+    }
+
     const stash: Stash = await StashService.getStash();
   
     let urlsToOpen: string[];
