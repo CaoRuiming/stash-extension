@@ -10,39 +10,12 @@ html, body {
   text-align: center;
 }
 
-#popup-page {
-  width: 200px;
-  margin: 0;
-  padding: 0;
-}
-
-.option-card-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.option-card {
-  width: 300px;
-  height: 300px;
-  padding: 20px;
-  margin: 20px;
-  background-color: var(--card-bg-color);
-  border: 1px solid var(--border-color);
-}
-
 .hr {
   width: 100%;
   border-top: 1px solid hsl(0, 0%, 10%);
   margin: 4px 0;
 }
 
-.action-choice {
-  width: 100%;
-  padding: 4px;
-  font-size: 1.5em;
-  text-align: center;
-  background-color: var(--primary-bg-color);
-}
 
 button {
   outline: none;
@@ -54,5 +27,37 @@ button:hover {
 button:active{
   outline: none;
   background: transparent;
+  border: 1px solid var(--border-color);
+}
+
+.action-choice {
+  width: 100%;
+  padding: 4px;
+  font-size: 1.5em;
+  text-align: center;
+  background-color: var(--primary-bg-color);
+}
+
+#popup-page {
+  width: 200px;
+  margin: 0;
+  padding: 0;
+}
+
+.option-cards-wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.option-card {
+  width: 300px;
+  height: 300px;
+  padding: 20px;
+  margin: 20px;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+}
+.option-card button {
   border: 1px solid var(--border-color);
 }

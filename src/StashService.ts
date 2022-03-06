@@ -1,4 +1,4 @@
-import { getUrl, notify, downloadBlob, getTextFromFile, isUrl, getBatchEndUrl } from './Util.js';
+import { notify, downloadBlob, getTextFromFile, isUrl, getBatchEndUrl } from './Util.js';
 
 /**
  * Format of a Stash.
@@ -30,13 +30,37 @@ export default class StashService {
 
   /**
    * Adds the URL of the active tab in the current window to the top of the Stash.
+   * @param url URL to add to the top/beginning of the Stash.
    */
-  static async stashAdd(): Promise<void> {
-    const url: string = await getUrl();
+  static async stashAdd(url: string): Promise<void> {
     const stash: Stash = (await StashService.getStash()).filter(x => x !== url);
     stash.unshift(url);
-    StashService.saveStash(stash);
+    await StashService.saveStash(stash);
     notify('Add successful!');
+  }
+
+  /**
+   * Bumps the position of the specified url in the Stash up (towards the 
+   * beginning) or down (towards the end). Does nothing if the given URL is not
+   * already present in the Stash. A more positive bumpAmount pushes the given
+   * URL closer towards the top/beginning of the Stash. The opposite is true for
+   * more negative values of bumpAmount. The value of the bumped URL index will
+   * be clamped between 0 and the last index of the Stash.
+   * @param url URL to change the position of in the Stash.
+   * @param bumpAmount Number of indices to adjust the position of url.
+   */
+  static async stashBump(url: string, bumpAmount: number): Promise<void> {
+    const stash: Stash = await StashService.getStash();
+    const oldIndex: number = stash.indexOf(url);
+    if (oldIndex < 0) {
+      notify('Could not bump a url because it was not present in the Stash.');
+    } else {
+      const newIndex = Math.min(Math.max(oldIndex - bumpAmount, 0), stash.length - 1);
+      stash.splice(oldIndex, 1); // remove url from old position
+      stash.splice(newIndex, 0, url); // insert url into new position
+      await StashService.saveStash(stash);
+      notify('Bump successful!');
+    }
   }
 
   /**
@@ -46,14 +70,11 @@ export default class StashService {
    * This method actually "blanks out" the removed url so that the indices of 
    * the other urls in the Stash are not impacted. stashOpen will automatically 
    * skip Stash items and periodically remove empty items from the Stash.
+   * @param url URL to remove from the Stash, if present.
    */
-  static async stashRemove(): Promise<void> {
-    const url: string = await getUrl();
+  static async stashRemove(url: string): Promise<void> {
     const stash: Stash = await StashService.getStash();
-    // "Blank out" the removed url so that the indices of the other urls in the
-    // Stash are not impacted. stashOpen will automatically skip Stash items
-    // that are not URLs.
-    StashService.saveStash(stash.map(x => x === url ? "" : x));
+    await StashService.saveStash(stash.map(x => x === url ? "" : x));
     notify('Remove successful!');
   }
 
@@ -75,7 +96,7 @@ export default class StashService {
   
     let urlsToOpen: string[];
     if (batch && batch > 0) {
-      const batchSize: number = 50;
+      const batchSize: number = 40;
       urlsToOpen = stash
         .slice((batch - 1) * batchSize, batch * batchSize)
         .filter(isUrl);
@@ -91,7 +112,7 @@ export default class StashService {
     if (urlsToOpen.length === 0) {
       notify('Found no URLs to open.');
     } else {
-      urlsToOpen.forEach(url => chrome.tabs.create({ active: false, url }));
+      await Promise.all(urlsToOpen.map(url => chrome.tabs.create({ active: false, url })));
       notify('Open successful!');
     }
   }
@@ -106,7 +127,7 @@ export default class StashService {
       const fileContent: string = await getTextFromFile(file);
       const importedStash: Stash = fileContent.split('\n').filter(isUrl);
       if (importedStash.length > 0) {
-        StashService.saveStash(importedStash);
+        await StashService.saveStash(importedStash);
         notify('Import successful!');
       } else {
         notify('Import failed: empty import');
@@ -121,6 +142,6 @@ export default class StashService {
     const stash: Stash = (await StashService.getStash()).filter(isUrl);
     stash.unshift('STASH');
     const blob: Blob = new Blob([stash.join('\n')], { type: 'text/plain' });
-    downloadBlob(blob);
+    await downloadBlob(blob);
   }
 }
