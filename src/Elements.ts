@@ -5,11 +5,13 @@ import { getUrl, notify } from "./Util.js";
 
 export const stashAddComponent: HTMLButtonElement = create("button", {
   content: "Stash Add",
+  attributes: { "title": "Add current tab to the Stash" },
   onClick: async () => StashService.stashAdd(await getUrl()),
 });
 
 export const stashRemoveComponent: HTMLButtonElement = create("button", {
   content: "Stash Remove",
+  attributes: { "title": "Remove current tab from the Stash" },
   onClick: async () => StashService.stashRemove(await getUrl()),
 });
 
@@ -22,6 +24,9 @@ export const stashBumpComponent: HTMLElement = (() => {
   });
   const stashBumpButton: HTMLButtonElement = create("button", {
     content: "Stash Bump",
+    attributes: {
+      "title": "Bump current tab towards the front of the Stash (if positive)",
+    },
     onClick: async () => {
       StashService.stashBump(await getUrl(), parseInt(stashBumpInput.value) || 0);
     },
@@ -40,6 +45,7 @@ export const stashOpenComponent: HTMLElement = (() => {
   });
   const stashOpenButton: HTMLButtonElement = create("button", {
     content: "Stash Open",
+    attributes: { "title": "Open a subset/batch of the URLs in the Stash" },
     onClick: () => StashService.stashOpen(parseInt(batchNumberInput.value)),
   });
   return create("div", { content: [batchNumberInput, stashOpenButton] });
@@ -51,6 +57,7 @@ export const stashImportComponent: HTMLElement = (() => {
   });
   const stashImportButton: HTMLButtonElement = create("button", {
     content: "Stash Import",
+    attributes: { "title": "Replace the current stash with the selected file" },
     onClick: () => {
       const file: (File | undefined) = fileInput?.files?.[0];
       if (file) {
@@ -65,11 +72,13 @@ export const stashImportComponent: HTMLElement = (() => {
 
 export const stashExportComponent: HTMLButtonElement = create("button", {
   content: "Stash Export",
+  attributes: { "title": "Export the current stash as a text file" },
   onClick: StashService.stashExport,
 });
 
 export const stashClearComponent: HTMLButtonElement = create("button", {
   content: "Stash Clear",
+  attributes: { "title": "Export the current Stash and then empty it" },
   onClick: async () => {
     try {
       await StashService.stashExport();
@@ -96,6 +105,7 @@ export const stashBatchSizeComponent: HTMLElement = (() => {
   });
   const stashBatchSizeButton: HTMLButtonElement = create("button", {
     content: "Set Stash Batch Size",
+    attributes: { "title": "Set the batch size used by Batch Open" },
     onClick: async () => {
       const settings: Settings = await SettingsService.getSettings();
       const newBatchSize = parseInt(stashBatchSizeInput.value);
@@ -124,6 +134,7 @@ export const stashBumpAmountComponent: HTMLElement = (() => {
   });
   const stashBumpAmountButton: HTMLButtonElement = create("button", {
     content: "Set Default Stash Bump Amount",
+    attributes: { "title": "Set the default bump amount used by Stash Bump" },
     onClick: async () => {
       const settings: Settings = await SettingsService.getSettings();
       const newBumpAmount = parseInt(stashBumpAmountInput.value);
