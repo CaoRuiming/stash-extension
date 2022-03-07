@@ -1,8 +1,10 @@
 export interface Settings {
   batchSize: number;
+  defaultBump: number;
 }
 const DEFAULT_SETTINGS: Settings = Object.freeze({
   batchSize: 40,
+  defaultBump: 5,
 });
 
 export default class SettingsService {

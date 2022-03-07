@@ -8,6 +8,7 @@ import {
   stashBumpComponent,
   stashImportComponent,
   stashBatchSizeComponent,
+  stashBumpAmountComponent,
 } from "./Elements.js";
 import StashService from "./StashService.js";
 
@@ -41,7 +42,11 @@ if (body.id === "popup-page") {
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Set Stash Size" }), stashBatchSizeComponent],
+          content: [create("h2", { content: "Set Stash Batch Size" }), stashBatchSizeComponent],
+        }),
+        create("div", {
+          classes: "option-card",
+          content: [create("h2", { content: "Set Default Bump Amount" }), stashBumpAmountComponent],
         }),
       ],
     }),
