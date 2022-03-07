@@ -1,31 +1,25 @@
 import { create } from "./Dom.js";
 import {
-  stashAddButton,
-  stashRemoveButton,
-  stashOpenButton,
-  stashExportButton,
-  fileInput,
-  stashImportButton,
-  batchNumberInput,
-  stashBumpInput,
-  stashBumpButton,
-  stashClearButton,
-  stashBatchSizeInput,
-  stashBatchSizeButton,
+  stashAddComponent,
+  stashRemoveComponent,
+  stashExportComponent,
+  stashClearComponent,
+  stashOpenComponent,
+  stashBumpComponent,
+  stashImportComponent,
+  stashBatchSizeComponent,
 } from "./Elements.js";
 import StashService from "./StashService.js";
 
 const body: HTMLElement = document.body;
 if (body.id === "popup-page") {
   [
-    stashAddButton,
-    stashRemoveButton,
+    stashAddComponent,
+    stashRemoveComponent,
     create("div", { classes: "hr" }),
-    stashBumpInput,
-    stashBumpButton,
+    stashBumpComponent,
     create("div", { classes: "hr" }),
-    batchNumberInput,
-    stashOpenButton,
+    stashOpenComponent,
   ].forEach(x => body.appendChild(x));
 } else if (body.id === "options-page") {
   [
@@ -35,27 +29,19 @@ if (body.id === "popup-page") {
       content: [
         create("div", {
           classes: "option-card",
-          content: [
-            create("h2", { content: "Import Stash" }),
-            fileInput,
-            stashImportButton,
-          ],
+          content: [create("h2", { content: "Import Stash" }), stashImportComponent],
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Export Stash" }), stashExportButton],
+          content: [create("h2", { content: "Export Stash" }), stashExportComponent],
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Clear Stash" }), stashClearButton],
+          content: [create("h2", { content: "Clear Stash" }), stashClearComponent],
         }),
         create("div", {
           classes: "option-card",
-          content: [
-            create("h2", { content: "Set Stash Size" }),
-            stashBatchSizeInput,
-            stashBatchSizeButton,
-          ],
+          content: [create("h2", { content: "Set Stash Size" }), stashBatchSizeComponent],
         }),
       ],
     }),

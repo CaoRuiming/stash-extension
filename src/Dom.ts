@@ -1,6 +1,6 @@
 import { arrify } from "./Util.js";
 
-interface CreateElementOptions {
+interface CreateElementOptions<T> {
   id?: string;
   /**
    * Style class(es) for the element. No whitespace allowed.
@@ -14,7 +14,11 @@ interface CreateElementOptions {
   /**
    * Ignored for non-form elements.
    */
-  onSubmit?: (e: Event) => void;
+  onSubmit?: (event: Event) => void;
+  /**
+   * Callback function that is called just after the HTML element is created.
+   */
+  onCreate?: (element: T) => void;
   attributes?: Record<string, string>;
 }
 
@@ -26,10 +30,10 @@ interface CreateElementOptions {
  */
 export function create<K extends keyof HTMLElementTagNameMap>(
   tag: K,
-  options: CreateElementOptions = {},
+  options: CreateElementOptions<HTMLElementTagNameMap[K]> = {},
 ): HTMLElementTagNameMap[K] {
   const element: HTMLElementTagNameMap[K] = document.createElement(tag);
-  const { id, classes, content, onClick, onSubmit, attributes } = options;
+  const { id, classes, content, onClick, onSubmit, onCreate, attributes } = options;
 
   if (content) {
     arrify(content)
@@ -43,6 +47,8 @@ export function create<K extends keyof HTMLElementTagNameMap>(
   if (attributes) {
     Object.entries(attributes).forEach(([k, v]) => element.setAttribute(k, v));
   }
+
+  if (onCreate) { onCreate(element); }
 
   return element;
 }
