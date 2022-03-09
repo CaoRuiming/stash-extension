@@ -1,5 +1,5 @@
 import SettingsService from "./SettingsService.js";
-import { notify, downloadBlob, getTextFromFile, isUrl, getBatchEndUrl } from "./Util.js";
+import { downloadBlob, getTextFromFile, isUrl, getBatchEndUrl, sanitizeUrl } from "./Util.js";
 
 /**
  * Format of a Stash.
@@ -30,6 +30,15 @@ export default class StashService {
   }
 
   /**
+   * Maintenance method that filters invalid URLs from the Stash and sanitizes
+   * the remaining entries.
+   */
+  static async cleanStash(): Promise<void> {
+    const stash: Stash = await StashService.getStash();
+    await StashService.saveStash(stash.filter(isUrl).map(sanitizeUrl));
+  }
+
+  /**
    * Adds the URL of the active tab in the current window to the top of the Stash.
    * @param url URL to add to the top/beginning of the Stash.
    */
@@ -37,7 +46,6 @@ export default class StashService {
     const stash: Stash = (await StashService.getStash()).filter(x => x !== url);
     stash.unshift(url);
     await StashService.saveStash(stash);
-    notify("Add successful!");
   }
 
   /**
@@ -54,13 +62,12 @@ export default class StashService {
     const stash: Stash = await StashService.getStash();
     const oldIndex: number = stash.indexOf(url);
     if (oldIndex < 0) {
-      notify("Could not bump a url because it was not present in the Stash.");
+      throw new Error("Could not bump a url because it was not present in the Stash.");
     } else {
       const newIndex = Math.min(Math.max(oldIndex - bumpAmount, 0), stash.length - 1);
       stash.splice(oldIndex, 1); // remove url from old position
       stash.splice(newIndex, 0, url); // insert url into new position
       await StashService.saveStash(stash);
-      notify("Bump successful!");
     }
   }
 
@@ -76,7 +83,6 @@ export default class StashService {
   static async stashRemove(url: string): Promise<void> {
     const stash: Stash = await StashService.getStash();
     await StashService.saveStash(stash.map(x => x === url ? "" : x));
-    notify("Remove successful!");
   }
 
   /**
@@ -89,8 +95,7 @@ export default class StashService {
    */
   static async stashOpen(batch?: number): Promise<void> {
     if (!batch || batch === 1) {
-      const stash: Stash = await StashService.getStash();
-      await StashService.saveStash(stash.filter(isUrl));
+      await StashService.cleanStash();
     }
 
     const stash: Stash = await StashService.getStash();
@@ -111,10 +116,9 @@ export default class StashService {
     }
 
     if (urlsToOpen.length === 0) {
-      notify("Found no URLs to open.");
+      throw new Error("Found no URLs to open.");
     } else {
       await Promise.all(urlsToOpen.map(url => chrome.tabs.create({ active: false, url })));
-      notify("Open successful!");
     }
   }
 
@@ -128,9 +132,8 @@ export default class StashService {
     const importedStash: Stash = fileContent.split("\n").filter(isUrl);
     if (importedStash.length > 0) {
       await StashService.saveStash(importedStash);
-      notify("Import successful!");
     } else {
-      notify("Import failed: empty import");
+      throw new Error("Import was empty");
     }
   }
 

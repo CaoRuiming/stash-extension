@@ -59,6 +59,21 @@ export function notify(message: string): void {
 }
 
 /**
+ * Notifies the user of an error caught in a try-catch block.
+ * @param error Error to notify user of.
+ * @param prefix String to prepend to error message in notification.
+ */
+export function notifyError(error: unknown, prefix = ""): void {
+  if (typeof error === "string") {
+    notify(prefix + error);
+  } else if (error instanceof Error) {
+    notify(prefix + error.message);
+  } else {
+    notify(prefix + "An unknown error occurred.");
+  }
+}
+
+/**
  * Downloads a blob. Returns a void Promise that resolves when the download is
  * complete. Automatically handles url cleanup for the download.
  * @param blob Blob to download.
@@ -74,6 +89,7 @@ export async function downloadBlob(blob: Blob, filename = "Stash.txt"): Promise<
           URL.revokeObjectURL(url);
           resolve(true);
         } else if (delta.error) {
+          URL.revokeObjectURL(url);
           reject(delta.error.current);
         }
       }
