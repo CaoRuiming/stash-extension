@@ -1,7 +1,7 @@
 import { create } from "./Dom.js";
 import SettingsService, { Settings } from "./SettingsService.js";
 import StashService from "./StashService.js";
-import { getUrl, notify, notifyError } from "./Util.js";
+import { getUrl, notify, errorToString } from "./Util.js";
 
 export const stashAddComponent: HTMLButtonElement = create("button", {
   content: "Stash Add",
@@ -10,7 +10,7 @@ export const stashAddComponent: HTMLButtonElement = create("button", {
     try {
       await StashService.stashAdd(await getUrl());
     } catch (error) {
-      notifyError(error, "Add failed: ");
+      notify("Add failed: ", errorToString(error));
       return;
     }
     notify("Add successful!");
@@ -24,7 +24,7 @@ export const stashRemoveComponent: HTMLButtonElement = create("button", {
     try {
       await StashService.stashRemove(await getUrl());
     } catch (error) {
-      notifyError(error, "Remove failed: ");
+      notify("Remove failed: ", errorToString(error));
       return;
     }
     notify("Remove successful!");
@@ -47,7 +47,7 @@ export const stashBumpComponent: HTMLElement = (() => {
       try {
         await StashService.stashBump(await getUrl(), parseInt(stashBumpInput.value) || 0);
       } catch (error) {
-        notifyError(error, "Bump failed: ");
+        notify("Bump failed: ", errorToString(error));
         return;
       }
       notify("Bump successful!");
@@ -72,7 +72,7 @@ export const stashOpenComponent: HTMLElement = (() => {
       try {
         await StashService.stashOpen(parseInt(batchNumberInput.value));
       } catch (error) {
-        notifyError(error, "Open failed: ");
+        notify("Open failed: ", errorToString(error));
         return;
       }
       notify("Open successful!");
@@ -94,7 +94,7 @@ export const stashImportComponent: HTMLElement = (() => {
         try {
           await StashService.stashImport(file);
         } catch (error) {
-          notifyError(error, "Import failed: ");
+          notify("Import failed: ", errorToString(error));
           return;
         }
         notify("Import successful!");
@@ -113,7 +113,7 @@ export const stashExportComponent: HTMLButtonElement = create("button", {
     try {
       await StashService.stashExport();
     } catch (error) {
-      notifyError(error, "Export failed: ");
+      notify("Export failed: ", errorToString(error));
     }
   },
 });
@@ -126,7 +126,7 @@ export const stashClearComponent: HTMLButtonElement = create("button", {
       await StashService.stashExport();
       await StashService.saveStash([]);
     } catch (error) {
-      notifyError(error, "Clear failed: ");
+      notify("Clear failed: ", errorToString(error));
       return;
     }
     notify("Clear successful!");
@@ -157,7 +157,7 @@ export const stashBatchSizeComponent: HTMLElement = (() => {
         try {
           await SettingsService.saveSettings({ ...settings, batchSize: newBatchSize });
         } catch (error) {
-          notifyError(error, "Batch size update failed: ");
+          notify("Batch size update failed: ", errorToString(error));
           return;
         }
         notify("Batch size updated!");
@@ -191,7 +191,7 @@ export const stashBumpAmountComponent: HTMLElement = (() => {
         try {
           await SettingsService.saveSettings({ ...settings, defaultBump: newBumpAmount });
         } catch (error) {
-          notifyError(error, "Bump amount update failed: ");
+          notify("Bump amount update failed: ", errorToString(error));
           return;
         }
         notify("Default bump amount updated!");

@@ -52,24 +52,25 @@ export function isUrl(str: string): boolean {
 
 /**
  * Creates a basic notification with the given message.
- * @param message Message to include in notification.
+ * @param messages Strings to include in notification.
  */
-export function notify(message: string): void {
+export function notify(...strings: string[]): void {
+  const message: string = strings.join("");
   chrome.notifications.create({ type: "basic", title: "Stash", message, iconUrl: "/icon.svg" });
 }
 
 /**
- * Notifies the user of an error caught in a try-catch block.
- * @param error Error to notify user of.
- * @param prefix String to prepend to error message in notification.
+ * Converts an error from a try/catch block into a printable string.
+ * @param error Error to convert to string.
+ * @returns String representing the error.
  */
-export function notifyError(error: unknown, prefix = ""): void {
+export function errorToString(error: unknown): string {
   if (typeof error === "string") {
-    notify(prefix + error);
+    return error;
   } else if (error instanceof Error) {
-    notify(prefix + error.message);
+    return error.message;
   } else {
-    notify(prefix + "An unknown error occurred.");
+    return "An unknown error occurred.";
   }
 }
 
