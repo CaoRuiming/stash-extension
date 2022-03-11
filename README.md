@@ -34,7 +34,7 @@ This action removes the URL of the active tab of the the active browser window f
 
 ### Stash Open
 
-Given an optional batch number (batch 1 is always the first batch), opens the first/top `n` URLs from the Stash in LIFO (last in first out) order. Note that this order may be altered by actions besides opening and removing. These URLs are opened into new tabs in the current browser window. `n` is the batch size as configured in the extension's options page. The default batch size is `40`, but this can be changed as necessary.
+Given an optional batch number (batch 1 is always the first batch), opens the first/top `n` URLs from the Stash in LIFO (last in first out) order. Note that this order may be altered by actions besides adding and removing. These URLs are opened into new tabs in the current browser window. `n` is the batch size as configured in the extension's options page. The default batch size is `40`, but this can be changed as necessary.
 
 If no batch number is provided, this action will open all URLs from the Stash at once. If there are no URLs to open in the Stash or in a given batch, nothing will happen.
 
