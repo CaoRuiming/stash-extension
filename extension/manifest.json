@@ -16,10 +16,34 @@
     "page": "html/options.html",
     "open_in_tab": true
   },
+  "background": {
+    "service_worker": "js/Background.js",
+    "type": "module"
+  },
   "permissions": [
-    "storage",
+    "downloads",
     "notifications",
-    "tabs",
-    "downloads"
-  ]
+    "storage",
+    "tabs"
+  ],
+  "commands": {
+    "add": {
+      "suggested_key": {
+        "default": "Alt+A"
+      },
+      "description": "Add current page's URL to the Stash"
+    },
+    "remove": {
+      "suggested_key": {
+        "default": "Alt+R"
+      },
+      "description": "Remove current page's URL from the Stash"
+    },
+    "bump": {
+      "suggested_key": {
+        "default": "Alt+B"
+      },
+      "description": "Bump position of current page's URL in the Stash"
+    }
+  }
 }

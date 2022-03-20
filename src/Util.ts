@@ -52,11 +52,16 @@ export function isUrl(str: string): boolean {
 
 /**
  * Creates a basic notification with the given message.
- * @param messages Strings to include in notification.
+ * @param strings Strings to include in notification.
  */
 export function notify(...strings: string[]): void {
   const message: string = strings.join("");
-  chrome.notifications.create({ type: "basic", title: "Stash", message, iconUrl: "/icon.svg" });
+  chrome.notifications.create({
+    type: "basic",
+    title: "Stash",
+    message,
+    iconUrl: "/notification.png",
+  });
 }
 
 /**

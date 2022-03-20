@@ -44,13 +44,14 @@ export const stashBumpComponent: HTMLElement = (() => {
       "title": "Bump current tab towards the front of the Stash (if positive)",
     },
     onClick: async () => {
+      const bumpAmount: number = parseInt(stashBumpInput.value) || 0;
       try {
-        await StashService.stashBump(await getUrl(), parseInt(stashBumpInput.value) || 0);
+        await StashService.stashBump(await getUrl(), bumpAmount);
       } catch (error) {
         notify("Bump failed: ", errorToString(error));
         return;
       }
-      notify("Bump successful!");
+      notify("Successfully bumped item by ", bumpAmount.toString());
     },
   });
   return create("div", { content: [stashBumpInput, stashBumpButton] });
@@ -69,13 +70,18 @@ export const stashOpenComponent: HTMLElement = (() => {
     content: "Stash Open",
     attributes: { "title": "Open a subset/batch of the URLs in the Stash" },
     onClick: async () => {
+      const batch: number = parseInt(batchNumberInput.value);
       try {
-        await StashService.stashOpen(parseInt(batchNumberInput.value));
+        await StashService.stashOpen(batch);
       } catch (error) {
         notify("Open failed: ", errorToString(error));
         return;
       }
-      notify("Open successful!");
+      if (batch) {
+        notify("Successfully opened batch #", batch.toString());
+      } else {
+        notify("Open successful!");
+      }
     },
   });
   return create("div", { content: [batchNumberInput, stashOpenButton] });
