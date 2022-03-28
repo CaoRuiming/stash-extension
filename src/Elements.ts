@@ -130,7 +130,7 @@ export const stashClearComponent: HTMLButtonElement = create("button", {
   onClick: async () => {
     try {
       await StashService.stashExport();
-      await StashService.saveStash([]);
+      await StashService.stashClear();
     } catch (error) {
       notify("Clear failed: ", errorToString(error));
       return;

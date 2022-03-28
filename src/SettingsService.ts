@@ -4,9 +4,12 @@ export interface Settings {
 }
 const DEFAULT_SETTINGS: Settings = Object.freeze({
   batchSize: 40,
-  defaultBump: 5,
+  defaultBump: 2,
 });
 
+/**
+ * Service class containing static methods for interacting with settings.
+ */
 export default class SettingsService {
   /**
    * Retreives a Settings object from browser local storage.
