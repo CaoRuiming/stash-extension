@@ -1,5 +1,5 @@
 import SettingsService from "./SettingsService.js";
-import { downloadBlob, getTextFromFile, isUrl, getBatchEndUrl, sanitizeUrl } from "./Util.js";
+import { downloadBlob, getTextFromFile, isUrl, getMessagePageUrl, sanitizeUrl } from "./Util.js";
 
 /**
  * Format of a Stash.
@@ -204,8 +204,11 @@ export default class StashService {
         .filter(isUrl);
       if (urlsToOpen.length > 0) {
         // if there are URLs to open, append a special page at the end to mark
-        // the end of the batch.
-        urlsToOpen.push(getBatchEndUrl(batch));
+        // the end of the batch or Stash.
+        urlsToOpen.push(getMessagePageUrl(`End of Batch ${batch}`));
+        if (stash.length < batch * batchSize) {
+          urlsToOpen.push(getMessagePageUrl("End of Stash"));
+        }
       }
     } else {
       urlsToOpen = stash.filter(isUrl);

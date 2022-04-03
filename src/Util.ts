@@ -18,13 +18,14 @@ export async function getUrl(): Promise<string> {
 }
 
 /**
- * Returns the absolute URL to the extension's special batch end page that shows
- * the batch number of the Stash batch that was opened.
- * @param batch Batch number that was opened by stashOpen.
- * @returns URL to batch end page.
+ * Returns the absolute URL to the extension's special message page that shows
+ * the given message string to the user. This page is typically used to tell
+ * users where the end of each batch and where the end of the stash is.
+ * @param message Message to display on the message page.
+ * @returns URL to the message page.
  */
-export function getBatchEndUrl(batch: number): string {
-  return "/html/batchEnd.html?batch=" + batch;
+export function getMessagePageUrl(message: string): string {
+  return encodeURI(`/html/messagePage.html?message=${message}`);
 }
 
 /**
