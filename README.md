@@ -24,29 +24,23 @@ This extension has two main interfaces/pages:
 - A popup containing primary functionality that appears when the extension icon is clicked in the browser toolbar.
 - An options page that supports data import and export and some customization options. This is accessible through right clicking the extension icon in the browser toolbar and clicking "Options".
 
-All actions that modify the contents of the Stash are **performed lazily** and will not actually be applied until the beginning of the Stash is opened (i.e. batch 1 is opened or the whole Stash is opened at once) or when the Stash is exported. This is so that users will not face any data inconsistency if they modify the Stash as they traverse through the contents in batches.
-
 The main functionality of this extension can be broken down into several actions as described below.
 
 ### Stash Add
 
 This action adds the URL of the active tab of the active browser window into the Stash. If the URL is already present in the Stash, it is moved to the front/top of the Stash.
 
-**This action is performed lazily.**
-
 ### Stash Remove
 
 This action removes the URL of the active tab of the the active browser window from the Stash. If the URL is not present in the Stash at the time of removal, nothing happens.
 
-**This action is performed lazily.**
-
 ### Stash Open
+
+This action keeps track of its own version/copy of the Stash and does not sync up with the most up-to-date version of the Stash unless the beginning of the Stash is opened (i.e. batch 1 is opened or the whole Stash is opened at once). This is so that users will not face any data inconsistency if they modify the Stash as they traverse through the contents in batches.
 
 Given an optional batch number (batch 1 is always the first batch), opens the first/top `n` URLs from the Stash in LIFO (last in first out) order. Note that this order may be altered by actions besides adding and removing. These URLs are opened into new tabs in the current browser window. `n` is the batch size as configured in the extension's options page. The default batch size is `40`, but this can be changed as necessary.
 
 If no batch number is provided, this action will open all URLs from the Stash at once. If there are no URLs to open in the Stash or in a given batch, nothing will happen.
-
-If the first batch or the whole Stash is opened, all lazy modifications will be applied beforehand.
 
 ### Stash Bump
 
@@ -54,17 +48,15 @@ This action alters the position/index of the current active tab's URL in the Sta
 
 If the current URL is not already present in the Stash, nothing will happen.
 
-**This action is performed lazily.**
-
 ### Stash Import
 
-This action takes a plain text file as input and replaces the current Stash with the contents of the file. All unapplied lazy modifications are also wiped out during the import process.
+This action takes a plain text file as input and replaces the current Stash with the contents of the file.
 
-The imported file must contain newline-separated URLs. Non-URLs are allowed, but they will be ignored.
+The imported file must contain newline-separated URLs. Non-URLs are allowed, but they will be filtered out automatically.
 
 ### Stash Export
 
-This action takes the current Stash and exports it as a plain text file. This file can be imported again later through the [Stash Import](#stash-import) function. The export process will apply all lazy modifications before creating the text file export.
+This action takes the current Stash and exports it as a plain text file. This file can be imported again later through the [Stash Import](#stash-import) function.
 
 ## Project Philosophy
 

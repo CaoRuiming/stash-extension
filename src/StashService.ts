@@ -7,148 +7,87 @@ import { downloadBlob, getTextFromFile, isUrl, getMessagePageUrl, sanitizeUrl } 
 export type Stash = string[];
 
 /**
- * The ways in which the Stash can be changed.
+ * Extension data saved in persistent browser storage.
  */
-export enum StashDeltaType {
-  ADD = "ADD",
-  REMOVE = "REMOVE",
-  BUMP = "BUMP"
-}
-
-/**
- * An object representing a change made to the Stash. These are accumulated and
- * then applied lazily when necessary.
- */
-export interface StashDelta {
-  type: StashDeltaType;
-  url: string;
+export interface StashData {
   /**
-   * Required field when type is BUMP.
+   * The most up to date Stash.
    */
-  bumpAmount?: number;
+  stash: Stash;
+  /**
+   * The version of Stash that the Stash Open action opens. This might not be
+   * up to date with all user-initiated mutations.
+   */
+  openedStash: Stash;
+}
+/**
+ * Interface of the input used for StashService.updateStashData(). Essentially
+ * the same as StashData but with all fields set to be optional.
+ */
+export interface StashDataUpdate {
+  stash?: Stash;
+  openedStash?: Stash;
 }
 
 /**
- * Service class containing static methods for interacting with the Stash. All
- * lazy actions can be applied by calling the updateStash method.
+ * Service class containing static methods for interacting with the Stash.
  */
 export default class StashService {
   /**
-   * Saves a given Stash into browser local storage. This will overwrite the
-   * existing saved Stash, if it exists.
-   * @param stash Stash to save into persistent browser local storage.
+   * Saves a given StashData object into browser local storage. This will
+   * overwrite the existing saved StashData object, if one exists.
+   * @param stashData StashData object to save into persistent browser storage.
    */
-  private static async saveStash(stash: Stash): Promise<void> {
-    await chrome.storage.local.set({ stash });
+  private static async saveStashData(stashData: StashData): Promise<void> {
+    await chrome.storage.local.set({ stashData });
   }
 
   /**
-   * Gets the stash that is saved in browser local storage. If no Stash if found,
-   * returns a new empty Stash wrapped in a Promise.
-   * @returns A Stash wrapped in a Promise.
+   * Convenience function for updating and saving a subset of the fields of
+   * StashData.
+   * @param stashDataUpdate Object including fields and values to update.
+   * @returns The newly updated StashData (already saved to browser storage).
    */
-  static async getStash(): Promise<Stash> {
-    const { stash } = await chrome.storage.local.get("stash");
-    return Array.isArray(stash) ? stash : [];
+  static async updateStashData(stashDataUpdate: StashDataUpdate): Promise<StashData> {
+    const oldStashData: StashData = await StashService.getStashData();
+    const newStashData: StashData = { ...oldStashData, ...stashDataUpdate };
+    await StashService.saveStashData(newStashData);
+    return newStashData;
   }
 
   /**
-   * Saves a given array of StashDeltas into browser lcoal storage. This will
-   * overwrite the existing array of StashDeltas, if it exists.
-   * @param stashDeltas StashDeltas to save into persistent browser storage.
+   * Gets extension stash data that is saved in browser local storage. If any
+   * field in the stash data is not initialized, this method initializes it (but
+   * does not save it).
+   * @returns A StashData object.
    */
-  private static async saveStashDeltas(stashDeltas: StashDelta[]): Promise<void> {
-    await chrome.storage.local.set({ stashDeltas });
+  static async getStashData(): Promise<StashData> {
+    const { stashData = {} } = await chrome.storage.local.get("stashData");
+    const { stash, openedStash } = stashData;
+    return {
+      ...stashData,
+      stash: Array.isArray(stash) ? stash : [],
+      openedStash: Array.isArray(openedStash) ? openedStash : [],
+    };
   }
 
   /**
-   * Gets all queued StashDeltas. Each StashDelta represents a change applied to
-   * the Stash.
-   * @returns Array of StashDeltas wrapped in a Promise.
-   */
-  static async getStashDeltas(): Promise<StashDelta[]> {
-    const { stashDeltas } = await chrome.storage.local.get("stashDeltas");
-    return Array.isArray(stashDeltas) ? stashDeltas : [];
-  }
-
-  /**
-   * Convenience function for adding and saving a new StashDelta.
-   * @param delta StashDelta to add to the queue saved in persistent storage.
-   */
-  private static async addStashDelta(delta: StashDelta): Promise<void> {
-    // Validation step
-    if (delta.type === StashDeltaType.BUMP && delta.bumpAmount === undefined) {
-      throw new Error("BUMP delta did not include bump amount");
-    }
-    const stashDeltas: StashDelta[] = await StashService.getStashDeltas();
-    stashDeltas.push(delta);
-    await StashService.saveStashDeltas(stashDeltas);
-  }
-
-  /**
-   * Applies a given array of StashDeltas to a given Stash. This method does not
-   * mutate its inputs, and returns a new (but unsaved) Stash.
-   * @param stash Stash to apply StashDeltas to (this is not mutated).
-   * @param stashDeltas StashDeltas to apply to the given Stash.
-   * @returns New (but unsaved) Stash made by applying stashDeltas to stash.
-   */
-  private static applyDeltas(stash: Stash, stashDeltas: StashDelta[]): Stash {
-    let result: Stash = stash.slice(0);
-    stashDeltas.forEach((delta: StashDelta) => {
-      const { type, url } = delta;
-      switch (type) {
-        case StashDeltaType.ADD: {
-          result = result.filter(x => x !== url);
-          result.unshift(url);
-          break;
-        }
-        case StashDeltaType.REMOVE: {
-          result = result.filter(x => x !== url);
-          break;
-        }
-        case StashDeltaType.BUMP: {
-          const oldIndex: number = result.indexOf(url);
-          const { bumpAmount } = delta;
-          if (oldIndex >= 0 && bumpAmount !== undefined) {
-            const newIndex = Math.min(Math.max(oldIndex - bumpAmount, 0), result.length);
-            result.splice(oldIndex, 1); // remove url from old position
-            result.splice(newIndex, 0, url); // insert url into new position
-          }
-          break;
-        }
-        default: {
-          throw new Error("Encountered unsupported stash change: " + type);
-        }
-      }
-    });
-    return result;
-  }
-
-  /**
-   * Applies all StashDeltas to the Stash. The new Stash is saved, and all
-   * StashDeltas are cleared. If an invalid StashDelta is encountered, it will
-   * not be applied but still be cleared at the end.
-   */
-  static async updateStash(): Promise<void> {
-    const stash: Stash = await StashService.getStash();
-    const stashDeltas: StashDelta[] = await StashService.getStashDeltas();
-    const newStash: Stash = StashService.applyDeltas(stash, stashDeltas);
-    // Filter invalid URLs from the Stash and sanitize the remaining entries.
-    StashService.saveStash(newStash.filter(isUrl).map(sanitizeUrl));
-    StashService.saveStashDeltas([]);
-  }
-
-  /**
-   * Lazily adds the URL of the active tab in the current window to the top of
+   * Adds the URL of the active tab in the current window to the top of
    * the Stash.
    * @param url URL to add to the top/beginning of the Stash.
    */
   static async stashAdd(url: string): Promise<void> {
-    await StashService.addStashDelta({ type: StashDeltaType.ADD, url });
+    if (!isUrl(url)) {
+      throw new Error("Could not add url because it was invalid.");
+    }
+    const { stash: oldStash } = (await StashService.getStashData());
+    const newStash: Stash = oldStash.filter(x => x !== url);
+    newStash.unshift(url);
+    await StashService.updateStashData({ stash: newStash });
   }
 
   /**
-   * Lazily bumps the position of the specified url in the Stash up (towards the
+   * Bumps the position of the specified url in the Stash up (towards the
    * beginning) or down (towards the end). Does nothing if the given URL is not
    * already present in the Stash. A more positive bumpAmount pushes the given
    * URL closer towards the top/beginning of the Stash. The opposite is true for
@@ -158,43 +97,48 @@ export default class StashService {
    * @param bumpAmount Number of indices to adjust the position of url.
    */
   static async stashBump(url: string, bumpAmount: number): Promise<void> {
-    const stash: Stash = await StashService.getStash();
-    if (!stash.includes(url)) {
-      // Check that url is not going to be added in through a StashDelta before
-      // throwing an error.
-      const stashDeltas: StashDelta[] = await StashService.getStashDeltas();
-      const stashWithDeltas: Stash = StashService.applyDeltas(stash, stashDeltas);
-      if (!stashWithDeltas.includes(url)) {
-        throw new Error("Could not bump a url because it was not present in the Stash.");
-      }
+    const { stash } = await StashService.getStashData();
+    const oldIndex: number = stash.indexOf(url);
+    if (oldIndex < 0) {
+      throw new Error("Could not bump a url because it was not present in the Stash.");
     } else {
-      await StashService.addStashDelta({ type: StashDeltaType.BUMP, url, bumpAmount });
+      const newIndex = Math.min(Math.max(oldIndex - bumpAmount, 0), stash.length - 1);
+      stash.splice(oldIndex, 1); // remove url from old position
+      stash.splice(newIndex, 0, url); // insert url into new position
+      await StashService.updateStashData({ stash });
     }
   }
 
   /**
-   * Lazily removes the URL of the active tab in the current window to the Stash. Does
+   * Removes the URL of the active tab in the current window to the Stash. Does
    * nothing if the current URL is not already in the Stash.
    * @param url URL to remove from the Stash, if present.
    */
   static async stashRemove(url: string): Promise<void> {
-    await StashService.addStashDelta({ type: StashDeltaType.REMOVE, url });
+    const { stash: oldStash } = (await StashService.getStashData());
+    const newStash: Stash = oldStash.filter(x => x !== url);
+    await StashService.updateStashData({ stash: newStash });
   }
 
   /**
    * Given a batch number, opens subset of the URLs in the Stash. If no batch
    * number is specified, this method opens all urls in the Stash. If the batch
-   * number is 1 or not provided, this method applies all StashDeltas to the
-   * Stash (i.e. executes all lazily performed Stash actions) before opening
-   * anything. Invalid entries are always skipped by this method.
+   * number is 1 or not provided, this method copies the most recent version of
+   * the Stash for its own reference before opening anything. This copy will be
+   * the version of the Stash that is opened for all other batches. Invalid
+   * entries are always skipped by this method.
    * @param batch Batch number to open from the Stash.
    */
   static async stashOpen(batch?: number): Promise<void> {
+    let stash: Stash;
     if (!batch || batch === 1) {
-      await StashService.updateStash();
+      // If the beginning of the Stash is being opened, set openedStash to be
+      // the same as stash.
+      const oldStashData: StashData = await StashService.getStashData();
+      ({ stash } = await StashService.updateStashData({ openedStash: oldStashData.stash }));
+    } else {
+      ({ openedStash: stash } = await StashService.getStashData());
     }
-
-    const stash: Stash = await StashService.getStash();
 
     let urlsToOpen: string[];
     if (batch && batch > 0) {
@@ -224,16 +168,17 @@ export default class StashService {
   /**
    * Reads a user-provided text file and overwrites the current Stash with the
    * contents of the import. Expects the imported text file to contain URLs
-   * separated by newlines. Invalid URLs are ignored. The import process also
-   * clears out all saved StashDeltas.
+   * separated by newlines. Invalid URLs are ignored.
    * @param file Text file containing newline-separated urls to import.
    */
   static async stashImport(file: File): Promise<void> {
     const fileContent: string = await getTextFromFile(file);
     const importedStash: Stash = fileContent.split("\n").filter(isUrl).map(sanitizeUrl);
     if (importedStash.length > 0) {
-      await StashService.saveStash(importedStash);
-      await StashService.saveStashDeltas([]);
+      await StashService.updateStashData({
+        stash: importedStash,
+        openedStash: importedStash.slice(0),
+      });
     } else {
       throw new Error("Import was empty");
     }
@@ -243,18 +188,16 @@ export default class StashService {
    * Downloads the current Stash as a text file.
    */
   static async stashExport(): Promise<void> {
-    await StashService.updateStash();
-    const stash: Stash = await StashService.getStash();
+    const { stash } = await StashService.getStashData();
     stash.unshift("STASH");
     const blob: Blob = new Blob([stash.join("\n")], { type: "text/plain" });
     await downloadBlob(blob);
   }
 
   /**
-   * Clears all Stash items and StashDeltas.
+   * Clears all Stash items.
    */
   static async stashClear(): Promise<void> {
-    await StashService.saveStash([]);
-    await StashService.saveStashDeltas([]);
+    await StashService.updateStashData({ stash: [], openedStash: [] });
   }
 }

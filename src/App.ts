@@ -51,8 +51,7 @@ if (body.id === "popup-page") {
       ],
     }),
   ].forEach(x => body.appendChild(x));
-  (async () => console.info("Current Stash", await StashService.getStash()))();
-  (async () => console.info("Current StashDeltas", await StashService.getStashDeltas()))();
+  (async () => console.info("Current StashData", await StashService.getStashData()))();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).StashService = StashService;
 }
