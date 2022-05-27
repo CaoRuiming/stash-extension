@@ -1,5 +1,5 @@
 import SettingsService from "./SettingsService.js";
-import { downloadBlob, getTextFromFile, isUrl, getMessagePageUrl, sanitizeUrl } from "./Util.js";
+import { downloadBlob, getTextFromFile, isUrl, getMessagePageUrl, sanitizeUrl, deduplicate } from "./Util.js";
 
 /**
  * Format of a Stash.
@@ -173,7 +173,9 @@ export default class StashService {
    */
   static async stashImport(file: File): Promise<void> {
     const fileContent: string = await getTextFromFile(file);
-    const importedStash: Stash = fileContent.split("\n").filter(isUrl).map(sanitizeUrl);
+    const importedStash: Stash = (
+      deduplicate(fileContent.split("\n").filter(isUrl).map(sanitizeUrl))
+    );
     if (importedStash.length > 0) {
       await StashService.updateStashData({
         stash: importedStash,

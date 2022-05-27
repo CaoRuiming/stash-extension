@@ -52,6 +52,25 @@ export function isUrl(str: string): boolean {
 }
 
 /**
+ * Given an array of string, removes all duplicates of each string. Only the
+ * first occurrence of each unique string is kept in the output. This function
+ * returns a new array and does not mutate its input.
+ * @param inputArray Array of strings to deduplicate.
+ * @returns Array of deduplicated string in the order that they appear in input.
+ */
+export function deduplicate(inputArray: string[]): string[] {
+  const seen: Set<string> = new Set();
+  const outputArray: string[] = [];
+  inputArray.forEach(x => {
+    if (!seen.has(x)) {
+      outputArray.push(x);
+      seen.add(x);
+    }
+  });
+  return outputArray;
+}
+
+/**
  * Creates a basic notification with the given message.
  * @param strings Strings to include in notification.
  */
