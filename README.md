@@ -32,7 +32,7 @@ This action adds the URL of the active tab of the active browser window into the
 
 ### Stash Remove
 
-This action removes the URL of the active tab of the the active browser window from the Stash. If the URL is not present in the Stash at the time of removal, nothing happens.
+This action removes the URL of the active tab of the the active browser window from the Stash. If the URL is not present in the Stash at the time of removal, an error is thrown.
 
 ### Stash Open
 

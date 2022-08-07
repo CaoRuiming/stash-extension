@@ -110,12 +110,15 @@ export default class StashService {
   }
 
   /**
-   * Removes the URL of the active tab in the current window to the Stash. Does
-   * nothing if the current URL is not already in the Stash.
+   * Removes the URL of the active tab in the current window to the Stash.
+   * Throws error if the current URL is not already in the Stash.
    * @param url URL to remove from the Stash, if present.
    */
   static async stashRemove(url: string): Promise<void> {
     const { stash: oldStash } = (await StashService.getStashData());
+    if (!oldStash.includes(url)) {
+      throw new Error("Could not remove a url because it was not present in the Stash.");
+    }
     const newStash: Stash = oldStash.filter(x => x !== url);
     await StashService.updateStashData({ stash: newStash });
   }
