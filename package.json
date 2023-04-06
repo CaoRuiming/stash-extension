@@ -16,7 +16,7 @@
     "eslint": "^8.10.0"
   },
   "dependencies": {
-    "@types/chrome": "^0.0.180",
-    "typescript": "^4.6.2"
+    "@types/chrome": "^0.0.228",
+    "typescript": "^5.0.3"
   }
 }
