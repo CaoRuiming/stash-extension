@@ -20,12 +20,7 @@
     "service_worker": "js/Background.js",
     "type": "module"
   },
-  "permissions": [
-    "downloads",
-    "notifications",
-    "storage",
-    "tabs"
-  ],
+  "permissions": ["downloads", "notifications", "storage", "tabs"],
   "commands": {
     "add": {
       "suggested_key": {

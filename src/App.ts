@@ -21,7 +21,7 @@ if (body.id === "popup-page") {
     stashBumpComponent,
     create("div", { classes: "hr" }),
     stashOpenComponent,
-  ].forEach(x => body.appendChild(x));
+  ].forEach((x) => body.appendChild(x));
 } else if (body.id === "options-page") {
   [
     create("h1", { content: "Stash Extension Options" }),
@@ -30,28 +30,44 @@ if (body.id === "popup-page") {
       content: [
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Import Stash" }), stashImportComponent],
+          content: [
+            create("h2", { content: "Import Stash" }),
+            stashImportComponent,
+          ],
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Export Stash" }), stashExportComponent],
+          content: [
+            create("h2", { content: "Export Stash" }),
+            stashExportComponent,
+          ],
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Clear Stash" }), stashClearComponent],
+          content: [
+            create("h2", { content: "Clear Stash" }),
+            stashClearComponent,
+          ],
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Set Stash Batch Size" }), stashBatchSizeComponent],
+          content: [
+            create("h2", { content: "Set Stash Batch Size" }),
+            stashBatchSizeComponent,
+          ],
         }),
         create("div", {
           classes: "option-card",
-          content: [create("h2", { content: "Set Default Bump Amount" }), stashBumpAmountComponent],
+          content: [
+            create("h2", { content: "Set Default Bump Amount" }),
+            stashBumpAmountComponent,
+          ],
         }),
       ],
     }),
-  ].forEach(x => body.appendChild(x));
-  (async () => console.info("Current StashData", await StashService.getStashData()))();
+  ].forEach((x) => body.appendChild(x));
+  (async () =>
+    console.info("Current StashData", await StashService.getStashData()))();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).StashService = StashService;
 }

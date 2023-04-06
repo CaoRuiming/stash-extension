@@ -21,6 +21,7 @@ If you don't have npm or bash, just manually compile the TypeScript files in the
 ## How to Use
 
 This extension has two main interfaces/pages:
+
 - A popup containing primary functionality that appears when the extension icon is clicked in the browser toolbar.
 - An options page that supports data import and export and some customization options. This is accessible through right clicking the extension icon in the browser toolbar and clicking "Options".
 

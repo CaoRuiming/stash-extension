@@ -13,7 +13,9 @@ export function arrify<T>(x: T | T[]): T[] {
  * @returns The URL of the current tab wrapped in a Promise.
  */
 export async function getUrl(): Promise<string> {
-  const { url } = (await chrome.tabs.query({ currentWindow: true, active: true }))[0];
+  const { url } = (
+    await chrome.tabs.query({ currentWindow: true, active: true })
+  )[0];
   return sanitizeUrl(url || "");
 }
 
@@ -34,7 +36,7 @@ export function getMessagePageUrl(message: string): string {
  * @returns Sanitized URL.
  */
 export function sanitizeUrl(url: string): string {
-  const matches: (RegExpMatchArray | null) = url.match(/^([^?]*)\??/);
+  const matches: RegExpMatchArray | null = url.match(/^([^?]*)\??/);
   return matches ? matches[1] : "";
 }
 
@@ -48,7 +50,7 @@ export function isUrl(str: string): boolean {
   if (!str) {
     return false;
   }
-  return (/^https?:\/\/.*/).test(str);
+  return /^https?:\/\/.*/.test(str);
 }
 
 /**
@@ -61,7 +63,7 @@ export function isUrl(str: string): boolean {
 export function deduplicate(inputArray: string[]): string[] {
   const seen: Set<string> = new Set();
   const outputArray: string[] = [];
-  inputArray.forEach(x => {
+  inputArray.forEach((x) => {
     if (!seen.has(x)) {
       outputArray.push(x);
       seen.add(x);
@@ -105,22 +107,31 @@ export function errorToString(error: unknown): string {
  * @param blob Blob to download.
  * @param filename Suggested name of downloaded file. Defaults to 'Stash.txt'.
  */
-export async function downloadBlob(blob: Blob, filename = "Stash.txt"): Promise<void> {
+export async function downloadBlob(
+  blob: Blob,
+  filename = "Stash.txt"
+): Promise<void> {
   const url = URL.createObjectURL(blob);
-  const params: chrome.downloads.DownloadOptions = { url, filename, saveAs: true };
-  await new Promise((resolve, reject) => chrome.downloads.download(params, downloadId => {
-    chrome.downloads.onChanged.addListener(delta => {
-      if (delta.id === downloadId) {
-        if (delta.state?.current === "complete") {
-          URL.revokeObjectURL(url);
-          resolve(true);
-        } else if (delta.error) {
-          URL.revokeObjectURL(url);
-          reject(delta.error.current);
+  const params: chrome.downloads.DownloadOptions = {
+    url,
+    filename,
+    saveAs: true,
+  };
+  await new Promise((resolve, reject) =>
+    chrome.downloads.download(params, (downloadId) => {
+      chrome.downloads.onChanged.addListener((delta) => {
+        if (delta.id === downloadId) {
+          if (delta.state?.current === "complete") {
+            URL.revokeObjectURL(url);
+            resolve(true);
+          } else if (delta.error) {
+            URL.revokeObjectURL(url);
+            reject(delta.error.current);
+          }
         }
-      }
-    });
-  }));
+      });
+    })
+  );
 }
 
 /**
@@ -129,9 +140,13 @@ export async function downloadBlob(blob: Blob, filename = "Stash.txt"): Promise<
  * @returns String wrapped in a Promise.
  */
 export function getTextFromFile(file: File): Promise<string> {
-  return new Promise<string>(resolve => {
+  return new Promise<string>((resolve) => {
     const reader = new FileReader();
-    reader.addEventListener("load", () => resolve((<string | null> reader.result) || ""), false);
+    reader.addEventListener(
+      "load",
+      () => resolve(<string | null>reader.result || ""),
+      false
+    );
     reader.readAsText(file);
   });
 }

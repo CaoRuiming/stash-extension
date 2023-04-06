@@ -1,5 +1,12 @@
 import SettingsService from "./SettingsService.js";
-import { downloadBlob, getTextFromFile, isUrl, getMessagePageUrl, sanitizeUrl, deduplicate } from "./Util.js";
+import {
+  downloadBlob,
+  getTextFromFile,
+  isUrl,
+  getMessagePageUrl,
+  sanitizeUrl,
+  deduplicate,
+} from "./Util.js";
 
 /**
  * Format of a Stash.
@@ -48,7 +55,9 @@ export default class StashService {
    * @param stashDataUpdate Object including fields and values to update.
    * @returns The newly updated StashData (already saved to browser storage).
    */
-  static async updateStashData(stashDataUpdate: StashDataUpdate): Promise<StashData> {
+  static async updateStashData(
+    stashDataUpdate: StashDataUpdate
+  ): Promise<StashData> {
     const oldStashData: StashData = await StashService.getStashData();
     const newStashData: StashData = { ...oldStashData, ...stashDataUpdate };
     await StashService.saveStashData(newStashData);
@@ -80,8 +89,8 @@ export default class StashService {
     if (!isUrl(url)) {
       throw new Error("Could not add url because it was invalid.");
     }
-    const { stash: oldStash } = (await StashService.getStashData());
-    const newStash: Stash = oldStash.filter(x => x !== url);
+    const { stash: oldStash } = await StashService.getStashData();
+    const newStash: Stash = oldStash.filter((x) => x !== url);
     newStash.unshift(url);
     await StashService.updateStashData({ stash: newStash });
   }
@@ -100,9 +109,14 @@ export default class StashService {
     const { stash } = await StashService.getStashData();
     const oldIndex: number = stash.indexOf(url);
     if (oldIndex < 0) {
-      throw new Error("Could not bump a url because it was not present in the Stash.");
+      throw new Error(
+        "Could not bump a url because it was not present in the Stash."
+      );
     } else {
-      const newIndex = Math.min(Math.max(oldIndex - bumpAmount, 0), stash.length - 1);
+      const newIndex = Math.min(
+        Math.max(oldIndex - bumpAmount, 0),
+        stash.length - 1
+      );
       stash.splice(oldIndex, 1); // remove url from old position
       stash.splice(newIndex, 0, url); // insert url into new position
       await StashService.updateStashData({ stash });
@@ -115,11 +129,13 @@ export default class StashService {
    * @param url URL to remove from the Stash, if present.
    */
   static async stashRemove(url: string): Promise<void> {
-    const { stash: oldStash } = (await StashService.getStashData());
+    const { stash: oldStash } = await StashService.getStashData();
     if (!oldStash.includes(url)) {
-      throw new Error("Could not remove a url because it was not present in the Stash.");
+      throw new Error(
+        "Could not remove a url because it was not present in the Stash."
+      );
     }
-    const newStash: Stash = oldStash.filter(x => x !== url);
+    const newStash: Stash = oldStash.filter((x) => x !== url);
     await StashService.updateStashData({ stash: newStash });
   }
 
@@ -138,7 +154,9 @@ export default class StashService {
       // If the beginning of the Stash is being opened, set openedStash to be
       // the same as stash.
       const oldStashData: StashData = await StashService.getStashData();
-      ({ stash } = await StashService.updateStashData({ openedStash: oldStashData.stash }));
+      ({ stash } = await StashService.updateStashData({
+        openedStash: oldStashData.stash,
+      }));
     } else {
       ({ openedStash: stash } = await StashService.getStashData());
     }
@@ -164,7 +182,9 @@ export default class StashService {
     if (urlsToOpen.length === 0) {
       throw new Error("Found no URLs to open.");
     } else {
-      await Promise.all(urlsToOpen.map(url => chrome.tabs.create({ active: false, url })));
+      await Promise.all(
+        urlsToOpen.map((url) => chrome.tabs.create({ active: false, url }))
+      );
     }
   }
 
@@ -176,8 +196,8 @@ export default class StashService {
    */
   static async stashImport(file: File): Promise<void> {
     const fileContent: string = await getTextFromFile(file);
-    const importedStash: Stash = (
-      deduplicate(fileContent.split("\n").filter(isUrl).map(sanitizeUrl))
+    const importedStash: Stash = deduplicate(
+      fileContent.split("\n").filter(isUrl).map(sanitizeUrl)
     );
     if (importedStash.length > 0) {
       await StashService.updateStashData({

@@ -33,7 +33,7 @@ chrome.commands.onCommand.addListener(async (command: string) => {
     case "bump": {
       let bumpAmount: number | undefined;
       try {
-        bumpAmount= (await SettingsService.getSettings()).defaultBump;
+        bumpAmount = (await SettingsService.getSettings()).defaultBump;
         await StashService.stashBump(url, bumpAmount);
       } catch (error) {
         notify("Bump failed: ", errorToString(error));

@@ -30,25 +30,36 @@ interface CreateElementOptions<T> {
  */
 export function create<K extends keyof HTMLElementTagNameMap>(
   tag: K,
-  options: CreateElementOptions<HTMLElementTagNameMap[K]> = {},
+  options: CreateElementOptions<HTMLElementTagNameMap[K]> = {}
 ): HTMLElementTagNameMap[K] {
   const element: HTMLElementTagNameMap[K] = document.createElement(tag);
-  const { id, classes, content, onClick, onSubmit, onCreate, attributes } = options;
+  const { id, classes, content, onClick, onSubmit, onCreate, attributes } =
+    options;
 
   if (content) {
     arrify(content)
-      .map(x => typeof x === "string" ? document.createTextNode(x) : x)
-      .forEach(x => element.appendChild(x));
+      .map((x) => (typeof x === "string" ? document.createTextNode(x) : x))
+      .forEach((x) => element.appendChild(x));
   }
-  if (id) { element.setAttribute("id", id); }
-  if (classes) { element.classList.add(...arrify(classes)); }
-  if (onClick) { element.addEventListener("click", onClick); }
-  if (onSubmit && tag === "form") { element.addEventListener("submit", onSubmit); }
+  if (id) {
+    element.setAttribute("id", id);
+  }
+  if (classes) {
+    element.classList.add(...arrify(classes));
+  }
+  if (onClick) {
+    element.addEventListener("click", onClick);
+  }
+  if (onSubmit && tag === "form") {
+    element.addEventListener("submit", onSubmit);
+  }
   if (attributes) {
     Object.entries(attributes).forEach(([k, v]) => element.setAttribute(k, v));
   }
 
-  if (onCreate) { onCreate(element); }
+  if (onCreate) {
+    onCreate(element);
+  }
 
   return element;
 }

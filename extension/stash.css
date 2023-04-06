@@ -10,7 +10,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   background-color: var(--primary-bg-color);
   text-align: center;
 }
@@ -33,7 +34,7 @@ button {
 button:hover {
   background-color: var(--hover-bg-color);
 }
-button:active{
+button:active {
   outline: none;
   background: transparent;
   border: 1px solid var(--border-color);

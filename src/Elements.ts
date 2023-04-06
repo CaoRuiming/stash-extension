@@ -5,7 +5,7 @@ import { getUrl, notify, errorToString } from "./Util.js";
 
 export const stashAddComponent: HTMLButtonElement = create("button", {
   content: "Stash Add",
-  attributes: { "title": "Add current tab to the Stash" },
+  attributes: { title: "Add current tab to the Stash" },
   onClick: async () => {
     try {
       await StashService.stashAdd(await getUrl());
@@ -19,7 +19,7 @@ export const stashAddComponent: HTMLButtonElement = create("button", {
 
 export const stashRemoveComponent: HTMLButtonElement = create("button", {
   content: "Stash Remove",
-  attributes: { "title": "Remove current tab from the Stash" },
+  attributes: { title: "Remove current tab from the Stash" },
   onClick: async () => {
     try {
       await StashService.stashRemove(await getUrl());
@@ -33,15 +33,17 @@ export const stashRemoveComponent: HTMLButtonElement = create("button", {
 
 export const stashBumpComponent: HTMLElement = (() => {
   const stashBumpInput: HTMLInputElement = create("input", {
-    attributes: { "type": "number", "step": "1", "placeholder": "Amount to bump" },
-    onCreate: async input => {
-      input.value = (await SettingsService.getSettings()).defaultBump.toString();
+    attributes: { type: "number", step: "1", placeholder: "Amount to bump" },
+    onCreate: async (input) => {
+      input.value = (
+        await SettingsService.getSettings()
+      ).defaultBump.toString();
     },
   });
   const stashBumpButton: HTMLButtonElement = create("button", {
     content: "Stash Bump",
     attributes: {
-      "title": "Bump current tab towards the front of the Stash (if positive)",
+      title: "Bump current tab towards the front of the Stash (if positive)",
     },
     onClick: async () => {
       const bumpAmount: number = parseInt(stashBumpInput.value) || 0;
@@ -60,15 +62,15 @@ export const stashBumpComponent: HTMLElement = (() => {
 export const stashOpenComponent: HTMLElement = (() => {
   const batchNumberInput: HTMLInputElement = create("input", {
     attributes: {
-      "type": "number",
-      "min": "1",
-      "step": "1",
-      "placeholder": "Batch to open",
+      type: "number",
+      min: "1",
+      step: "1",
+      placeholder: "Batch to open",
     },
   });
   const stashOpenButton: HTMLButtonElement = create("button", {
     content: "Stash Open",
-    attributes: { "title": "Open a subset/batch of the URLs in the Stash" },
+    attributes: { title: "Open a subset/batch of the URLs in the Stash" },
     onClick: async () => {
       const batch: number = parseInt(batchNumberInput.value);
       try {
@@ -89,13 +91,13 @@ export const stashOpenComponent: HTMLElement = (() => {
 
 export const stashImportComponent: HTMLElement = (() => {
   const fileInput: HTMLInputElement = create("input", {
-    attributes: { "type": "file" },
+    attributes: { type: "file" },
   });
   const stashImportButton: HTMLButtonElement = create("button", {
     content: "Stash Import",
-    attributes: { "title": "Replace the current stash with the selected file" },
+    attributes: { title: "Replace the current stash with the selected file" },
     onClick: async () => {
-      const file: (File | undefined) = fileInput?.files?.[0];
+      const file: File | undefined = fileInput?.files?.[0];
       if (file) {
         try {
           await StashService.stashImport(file);
@@ -114,7 +116,7 @@ export const stashImportComponent: HTMLElement = (() => {
 
 export const stashExportComponent: HTMLButtonElement = create("button", {
   content: "Stash Export",
-  attributes: { "title": "Export the current stash as a text file" },
+  attributes: { title: "Export the current stash as a text file" },
   onClick: async () => {
     try {
       await StashService.stashExport();
@@ -126,7 +128,7 @@ export const stashExportComponent: HTMLButtonElement = create("button", {
 
 export const stashClearComponent: HTMLButtonElement = create("button", {
   content: "Stash Clear",
-  attributes: { "title": "Export the current Stash and then empty it" },
+  attributes: { title: "Export the current Stash and then empty it" },
   onClick: async () => {
     try {
       await StashService.stashExport();
@@ -142,18 +144,18 @@ export const stashClearComponent: HTMLButtonElement = create("button", {
 export const stashBatchSizeComponent: HTMLElement = (() => {
   const stashBatchSizeInput: HTMLInputElement = create("input", {
     attributes: {
-      "type": "number",
-      "min": "1",
-      "step": "1",
-      "placeholder": "Batch size",
+      type: "number",
+      min: "1",
+      step: "1",
+      placeholder: "Batch size",
     },
-    onCreate: async input => {
+    onCreate: async (input) => {
       input.value = (await SettingsService.getSettings()).batchSize.toString();
     },
   });
   const stashBatchSizeButton: HTMLButtonElement = create("button", {
     content: "Set Stash Batch Size",
-    attributes: { "title": "Set the batch size used by Batch Open" },
+    attributes: { title: "Set the batch size used by Batch Open" },
     onClick: async () => {
       const settings: Settings = await SettingsService.getSettings();
       const newBatchSize = parseInt(stashBatchSizeInput.value);
@@ -161,7 +163,10 @@ export const stashBatchSizeComponent: HTMLElement = (() => {
         alert("Invalid batch size provided.");
       } else {
         try {
-          await SettingsService.saveSettings({ ...settings, batchSize: newBatchSize });
+          await SettingsService.saveSettings({
+            ...settings,
+            batchSize: newBatchSize,
+          });
         } catch (error) {
           notify("Batch size update failed: ", errorToString(error));
           return;
@@ -170,24 +175,28 @@ export const stashBatchSizeComponent: HTMLElement = (() => {
       }
     },
   });
-  return create("div", { content: [stashBatchSizeInput, stashBatchSizeButton] });
+  return create("div", {
+    content: [stashBatchSizeInput, stashBatchSizeButton],
+  });
 })();
 
 export const stashBumpAmountComponent: HTMLElement = (() => {
   const stashBumpAmountInput: HTMLInputElement = create("input", {
     attributes: {
-      "type": "number",
-      "min": "1",
-      "step": "1",
-      "placeholder": "Default bump amount",
+      type: "number",
+      min: "1",
+      step: "1",
+      placeholder: "Default bump amount",
     },
-    onCreate: async input => {
-      input.value = (await SettingsService.getSettings()).defaultBump.toString();
+    onCreate: async (input) => {
+      input.value = (
+        await SettingsService.getSettings()
+      ).defaultBump.toString();
     },
   });
   const stashBumpAmountButton: HTMLButtonElement = create("button", {
     content: "Set Default Stash Bump Amount",
-    attributes: { "title": "Set the default bump amount used by Stash Bump" },
+    attributes: { title: "Set the default bump amount used by Stash Bump" },
     onClick: async () => {
       const settings: Settings = await SettingsService.getSettings();
       const newBumpAmount = parseInt(stashBumpAmountInput.value);
@@ -195,7 +204,10 @@ export const stashBumpAmountComponent: HTMLElement = (() => {
         alert("Invalid bump amount provided.");
       } else {
         try {
-          await SettingsService.saveSettings({ ...settings, defaultBump: newBumpAmount });
+          await SettingsService.saveSettings({
+            ...settings,
+            defaultBump: newBumpAmount,
+          });
         } catch (error) {
           notify("Bump amount update failed: ", errorToString(error));
           return;
@@ -204,5 +216,7 @@ export const stashBumpAmountComponent: HTMLElement = (() => {
       }
     },
   });
-  return create("div", { content: [stashBumpAmountInput, stashBumpAmountButton] });
+  return create("div", {
+    content: [stashBumpAmountInput, stashBumpAmountButton],
+  });
 })();
