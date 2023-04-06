@@ -37,11 +37,11 @@ This action removes the URL of the active tab of the the active browser window f
 
 ### Stash Open
 
-This action keeps track of its own version/copy of the Stash and does not sync up with the most up-to-date version of the Stash unless the beginning of the Stash is opened (i.e. batch 1 is opened or the whole Stash is opened at once). This is so that users will not face any data inconsistency if they modify the Stash as they traverse through the contents in batches.
+This action keeps track of its own version/copy of the Stash and does not sync up with the most up-to-date version of the Stash unless the beginning of the Stash is opened (i.e. batch 1 is opened). This is so that users will not face any data inconsistency if they modify the Stash as they traverse through the contents in batches.
 
-Given an optional batch number (batch 1 is always the first batch), opens the first/top `n` URLs from the Stash in LIFO (last in first out) order. Note that this order may be altered by actions besides adding and removing. These URLs are opened into new tabs in the current browser window. `n` is the batch size as configured in the extension's options page. The default batch size is `40`, but this can be changed as necessary.
+Given a batch number (batch 1 is always the first batch), opens the first/top `n` URLs from the Stash in LIFO (last in first out) order. Note that this order may be altered by actions besides adding and removing. These URLs are opened into new tabs in the current browser window. `n` is the batch size as configured in the extension's options page. The default batch size is `40`, but this can be changed as necessary.
 
-If no batch number is provided, this action will open all URLs from the Stash at once. If there are no URLs to open in the Stash or in a given batch, nothing will happen.
+If no batch number is provided, an error will be thrown. If there are no URLs to open in the Stash or in a given batch, nothing will happen.
 
 ### Stash Bump
 

@@ -161,7 +161,7 @@ export default class StashService {
       ({ openedStash: stash } = await StashService.getStashData());
     }
 
-    let urlsToOpen: string[];
+    let urlsToOpen: string[] = [];
     if (batch && batch > 0) {
       const batchSize: number = (await SettingsService.getSettings()).batchSize;
       urlsToOpen = stash
@@ -176,7 +176,7 @@ export default class StashService {
         }
       }
     } else {
-      urlsToOpen = stash.filter(isUrl);
+      throw new Error("No batch number provided.");
     }
 
     if (urlsToOpen.length === 0) {
