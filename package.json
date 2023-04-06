@@ -6,6 +6,7 @@
     "build": "npx tsc",
     "lint": "npx eslint \"src/**\"",
     "lint-fix": "npx eslint \"src/**\" --fix",
+    "format": "npx prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Raymond Cao",
