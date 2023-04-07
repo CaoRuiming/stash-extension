@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Stash",
+  "version": "1.0",
+  "description": "Stashes URLs for later.",
+  "icons": {
+    "48": "icon.svg",
+    "96": "icon.svg"
+  },
+  "action": {
+    "browser_style": true,
+    "default_popup": "html/popup.html",
+    "default_icon": "icon.svg"
+  },
+  "options_ui": {
+    "page": "html/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": ["js/Background.js"],
+    "type": "module"
+  },
+  "permissions": ["downloads", "notifications", "storage", "tabs"],
+  "commands": {
+    "add": {
+      "suggested_key": {
+        "default": "Alt+A"
+      },
+      "description": "Add current page's URL to the Stash"
+    },
+    "remove": {
+      "suggested_key": {
+        "default": "Alt+R"
+      },
+      "description": "Remove current page's URL from the Stash"
+    },
+    "bump": {
+      "suggested_key": {
+        "default": "Alt+B"
+      },
+      "description": "Bump position of current page's URL in the Stash"
+    }
+  }
+}

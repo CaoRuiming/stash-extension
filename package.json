@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Stashes URLs for later.",
   "scripts": {
-    "build": "npx tsc",
+    "build": "./build.sh",
     "lint": "npx eslint \"src/**\"",
     "lint-fix": "npx eslint \"src/**\" --fix",
     "format": "npx prettier --write .",
