@@ -14,7 +14,7 @@ The Stash's purpose is to store a large number of URLs and open them later in ba
 
 You will need to have npm installed. A Unix-like environment with bash is expected.
 
-To set up and install, run `build.sh` and then load the `extension` directory as an unpacked extension in a browser that supports webextensions.
+To set up and install, run `build.sh` and then load the `extension` directory as an unpacked extension in a browser that supports webextensions. To build a Firefox-compatible version, run `./build.sh firefox`.
 
 If you don't have npm or bash, just manually compile the TypeScript files in the `src` directory into ECMAScript 2021 (`ES2021`) or later with ECMAScript modules (`ESNEXT`). Transfer the resulting JavaScript files into the directory `extension/js`.
 
