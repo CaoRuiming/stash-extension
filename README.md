@@ -76,3 +76,5 @@ Run `npm run build` to compile the TypeScript to JavaScript. The compiled files 
 Run `npm run lint` to lint the TypeScript files.
 
 Run `npm run lint-fix` to fix automatically fixable lint issues.
+
+Run `npm run format` to format source files in the project.
