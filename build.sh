@@ -10,8 +10,9 @@ npx tsc
 
 rm -f extension/manifest.json
 if [[ "$1" == "firefox" ]]; then
-    echo "Building for Firefox"
     cp src/manifest/firefox-manifest.json extension/manifest.json
+    echo "Firefox build complete"
 else
     cp src/manifest/chrome-manifest.json extension/manifest.json
+    echo "Chrome build complete"
 fi
