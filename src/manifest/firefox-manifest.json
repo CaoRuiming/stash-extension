@@ -40,5 +40,10 @@
       },
       "description": "Bump position of current page's URL in the Stash"
     }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "scrape@dummy.com"
+    }
   }
 }
