@@ -89,6 +89,14 @@ export const stashOpenComponent: HTMLElement = (() => {
   return create("div", { content: [batchNumberInput, stashOpenButton] });
 })();
 
+export const stashSettingsComponent: HTMLButtonElement = create("button", {
+  content: "Stash Options",
+  attributes: { title: "Open the options page for Stash" },
+  onClick: () => {
+    chrome.tabs.create({ active: true, url: "/html/options.html" })
+  },
+});
+
 export const stashImportComponent: HTMLElement = (() => {
   const fileInput: HTMLInputElement = create("input", {
     attributes: { type: "file" },

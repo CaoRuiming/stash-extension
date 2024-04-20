@@ -9,6 +9,7 @@ import {
   stashImportComponent,
   stashBatchSizeComponent,
   stashBumpAmountComponent,
+  stashSettingsComponent,
 } from "./Elements.js";
 import StashService from "./StashService.js";
 
@@ -21,6 +22,8 @@ if (body.id === "popup-page") {
     stashBumpComponent,
     create("div", { classes: "hr" }),
     stashOpenComponent,
+    create("div", { classes: "hr" }),
+    stashSettingsComponent,
   ].forEach((x) => body.appendChild(x));
 } else if (body.id === "options-page") {
   [
