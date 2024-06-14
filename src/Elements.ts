@@ -93,7 +93,7 @@ export const stashSettingsComponent: HTMLButtonElement = create("button", {
   content: "Stash Options",
   attributes: { title: "Open the options page for Stash" },
   onClick: () => {
-    chrome.tabs.create({ active: true, url: "/html/options.html" })
+    chrome.tabs.create({ active: true, url: "/html/options.html" });
   },
 });
 

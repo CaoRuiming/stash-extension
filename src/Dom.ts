@@ -30,7 +30,7 @@ interface CreateElementOptions<T> {
  */
 export function create<K extends keyof HTMLElementTagNameMap>(
   tag: K,
-  options: CreateElementOptions<HTMLElementTagNameMap[K]> = {}
+  options: CreateElementOptions<HTMLElementTagNameMap[K]> = {},
 ): HTMLElementTagNameMap[K] {
   const element: HTMLElementTagNameMap[K] = document.createElement(tag);
   const { id, classes, content, onClick, onSubmit, onCreate, attributes } =

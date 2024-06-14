@@ -109,7 +109,7 @@ export function errorToString(error: unknown): string {
  */
 export async function downloadBlob(
   blob: Blob,
-  filename = "Stash.txt"
+  filename = "Stash.txt",
 ): Promise<void> {
   const url = URL.createObjectURL(blob);
   const params: chrome.downloads.DownloadOptions = {
@@ -130,7 +130,7 @@ export async function downloadBlob(
           }
         }
       });
-    })
+    }),
   );
 }
 
@@ -145,7 +145,7 @@ export function getTextFromFile(file: File): Promise<string> {
     reader.addEventListener(
       "load",
       () => resolve(<string | null>reader.result || ""),
-      false
+      false,
     );
     reader.readAsText(file);
   });
