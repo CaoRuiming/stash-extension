@@ -49,15 +49,28 @@ This action alters the position/index of the current active tab's URL in the Sta
 
 If the current URL is not already present in the Stash, nothing will happen.
 
+### Stash Note
+
+This action saves a given string as a note associated with the current active tab's URL. If the current URL is not present in the Stash, an error is thrown.
+
 ### Stash Import
 
-This action takes a plain text file as input and replaces the current Stash with the contents of the file.
+This action takes a json file as input and replaces the current Stash with the contents of the file.
 
-The imported file must contain newline-separated URLs. Non-URLs are allowed, but they will be filtered out automatically.
+The imported file is expected to match the following interface:
+
+```ts
+interface StashJson {
+  // Array of URLs saved in the Stash.
+  stash: string[];
+  // Optional mapping of stashed URLs to corresponding notes.
+  notes?: Record<string, string>;
+}
+```
 
 ### Stash Export
 
-This action takes the current Stash and exports it as a plain text file. This file can be imported again later through the [Stash Import](#stash-import) function.
+This action takes the current Stash and exports it as a json text file. This file can be imported again later through the [Stash Import](#stash-import) function.
 
 ## Project Philosophy
 

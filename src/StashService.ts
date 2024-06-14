@@ -1,12 +1,5 @@
 import SettingsService from "./SettingsService.js";
-import {
-  downloadBlob,
-  getTextFromFile,
-  isUrl,
-  getMessagePageUrl,
-  sanitizeUrl,
-  deduplicate,
-} from "./Util.js";
+import { isUrl, getMessagePageUrl } from "./Util.js";
 
 /**
  * Format of a Stash.
@@ -31,10 +24,12 @@ export interface StashData {
  * Interface of the input used for StashService.updateStashData(). Essentially
  * the same as StashData but with all fields set to be optional.
  */
-export interface StashDataUpdate {
-  stash?: Stash;
-  openedStash?: Stash;
-}
+export type StashDataUpdate = Partial<StashData>;
+
+/**
+ * Key all persistent data is stored under for this service.
+ */
+const BROWSER_STORAGE_KEY = "stashData";
 
 /**
  * Service class containing static methods for interacting with the Stash.
@@ -46,7 +41,7 @@ export default class StashService {
    * @param stashData StashData object to save into persistent browser storage.
    */
   private static async saveStashData(stashData: StashData): Promise<void> {
-    await chrome.storage.local.set({ stashData });
+    await chrome.storage.local.set({ [BROWSER_STORAGE_KEY]: stashData });
   }
 
   /**
@@ -71,10 +66,11 @@ export default class StashService {
    * @returns A StashData object.
    */
   static async getStashData(): Promise<StashData> {
-    const { stashData = {} } = await chrome.storage.local.get("stashData");
-    const { stash, openedStash } = stashData;
+    const { [BROWSER_STORAGE_KEY]: data = {} } =
+      await chrome.storage.local.get(BROWSER_STORAGE_KEY);
+    const { stash, openedStash } = data;
     return {
-      ...stashData,
+      ...data,
       stash: Array.isArray(stash) ? stash : [],
       openedStash: Array.isArray(openedStash) ? openedStash : [],
     };
@@ -186,37 +182,6 @@ export default class StashService {
         urlsToOpen.map((url) => chrome.tabs.create({ active: false, url })),
       );
     }
-  }
-
-  /**
-   * Reads a user-provided text file and overwrites the current Stash with the
-   * contents of the import. Expects the imported text file to contain URLs
-   * separated by newlines. Invalid URLs are ignored.
-   * @param file Text file containing newline-separated urls to import.
-   */
-  static async stashImport(file: File): Promise<void> {
-    const fileContent: string = await getTextFromFile(file);
-    const importedStash: Stash = deduplicate(
-      fileContent.split("\n").filter(isUrl).map(sanitizeUrl),
-    );
-    if (importedStash.length > 0) {
-      await StashService.updateStashData({
-        stash: importedStash,
-        openedStash: importedStash.slice(0),
-      });
-    } else {
-      throw new Error("Import was empty");
-    }
-  }
-
-  /**
-   * Downloads the current Stash as a text file.
-   */
-  static async stashExport(): Promise<void> {
-    const { stash } = await StashService.getStashData();
-    stash.unshift("STASH");
-    const blob: Blob = new Blob([stash.join("\n")], { type: "text/plain" });
-    await downloadBlob(blob);
   }
 
   /**

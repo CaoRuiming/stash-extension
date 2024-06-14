@@ -1,4 +1,6 @@
 import { create } from "./Dom.js";
+import ImportExportService from "./ImportExportService.js";
+import NotesService from "./NotesService.js";
 import SettingsService, { Settings } from "./SettingsService.js";
 import StashService from "./StashService.js";
 import { getUrl, notify, errorToString } from "./Util.js";
@@ -89,6 +91,42 @@ export const stashOpenComponent: HTMLElement = (() => {
   return create("div", { content: [batchNumberInput, stashOpenButton] });
 })();
 
+export const stashNoteComponent: HTMLElement = (() => {
+  const stashNoteInput: HTMLTextAreaElement = create("textarea", {
+    attributes: { type: "number", step: "1", placeholder: "Notes", rows: "3" },
+    onCreate: async (textarea) => {
+      const notes = await NotesService.getNotes();
+      const url = await getUrl();
+      textarea.value = notes[url] ?? "";
+    },
+  });
+  const stashNoteButton: HTMLButtonElement = create("button", {
+    content: "Stash Note",
+    attributes: {
+      title: "Save given text as note for current URL",
+    },
+    onClick: async () => {
+      const url = await getUrl();
+      const { stash } = await StashService.getStashData();
+      if (!stash.includes(url)) {
+        notify("Failed to save note: URL not found in Stash");
+        return;
+      }
+
+      const notes = await NotesService.getNotes();
+      notes[url] = stashNoteInput.value;
+      try {
+        await NotesService.saveNotes(notes);
+      } catch (error) {
+        notify("Failed to save note: ", errorToString(error));
+        return;
+      }
+      notify("Successfully saved note");
+    },
+  });
+  return create("div", { content: [stashNoteInput, stashNoteButton] });
+})();
+
 export const stashSettingsComponent: HTMLButtonElement = create("button", {
   content: "Stash Options",
   attributes: { title: "Open the options page for Stash" },
@@ -108,7 +146,7 @@ export const stashImportComponent: HTMLElement = (() => {
       const file: File | undefined = fileInput?.files?.[0];
       if (file) {
         try {
-          await StashService.stashImport(file);
+          await ImportExportService.importStash(file);
         } catch (error) {
           notify("Import failed: ", errorToString(error));
           return;
@@ -127,7 +165,7 @@ export const stashExportComponent: HTMLButtonElement = create("button", {
   attributes: { title: "Export the current stash as a text file" },
   onClick: async () => {
     try {
-      await StashService.stashExport();
+      await ImportExportService.exportStash();
     } catch (error) {
       notify("Export failed: ", errorToString(error));
     }
@@ -139,7 +177,7 @@ export const stashClearComponent: HTMLButtonElement = create("button", {
   attributes: { title: "Export the current Stash and then empty it" },
   onClick: async () => {
     try {
-      await StashService.stashExport();
+      await ImportExportService.exportStash();
       await StashService.stashClear();
     } catch (error) {
       notify("Clear failed: ", errorToString(error));

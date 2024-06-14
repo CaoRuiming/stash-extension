@@ -10,6 +10,7 @@ import {
   stashBatchSizeComponent,
   stashBumpAmountComponent,
   stashSettingsComponent,
+  stashNoteComponent,
 } from "./Elements.js";
 import StashService from "./StashService.js";
 
@@ -22,6 +23,8 @@ if (body.id === "popup-page") {
     stashBumpComponent,
     create("div", { classes: "hr" }),
     stashOpenComponent,
+    create("div", { classes: "hr" }),
+    stashNoteComponent,
     create("div", { classes: "hr" }),
     stashSettingsComponent,
   ].forEach((x) => body.appendChild(x));
@@ -73,4 +76,9 @@ if (body.id === "popup-page") {
     console.info("Current StashData", await StashService.getStashData()))();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).StashService = StashService;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).clearExtensionData = () => {
+    // Clear all extension data for debugging purposes.
+    chrome.storage.local.clear();
+  };
 }

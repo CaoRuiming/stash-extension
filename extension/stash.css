@@ -40,7 +40,8 @@ button:active {
   border: 1px solid var(--border-color);
 }
 
-input {
+input,
+textarea {
   width: 100%;
   text-align: center;
   margin-bottom: 4px;
