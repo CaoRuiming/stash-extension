@@ -10,10 +10,10 @@
   "author": "Raymond Cao",
   "license": "MIT",
   "devDependencies": {
-    "@types/chrome": "^0.0.268",
-    "prettier": "3.3.2"
+    "@types/chrome": "^0.0.299",
+    "prettier": "3.4.2"
   },
   "dependencies": {
-    "typescript": "^5.4.5"
+    "typescript": "^5.7.3"
   }
 }
