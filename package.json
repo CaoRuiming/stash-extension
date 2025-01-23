@@ -4,8 +4,6 @@
   "description": "Stashes URLs for later.",
   "scripts": {
     "build": "./build.sh",
-    "lint": "npx eslint \"src/**\"",
-    "lint-fix": "npx eslint \"src/**\" --fix",
     "format": "npx prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,10 +11,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/chrome": "^0.0.268",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
-    "@typescript-eslint/parser": "^7.13.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
     "prettier": "3.3.2"
   },
   "dependencies": {

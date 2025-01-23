@@ -74,9 +74,7 @@ if (body.id === "popup-page") {
   ].forEach((x) => body.appendChild(x));
   (async () =>
     console.info("Current StashData", await StashService.getStashData()))();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).StashService = StashService;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).clearExtensionData = () => {
     // Clear all extension data for debugging purposes.
     chrome.storage.local.clear();

@@ -74,7 +74,7 @@ This action takes the current Stash and exports it as a json text file. This fil
 
 ## Project Philosophy
 
-I built extension for personal use and prioritized simplicity and use of modern ECMAScript/TypeScript over importing external libraries and packages. The only real dependencies for this project are npm and TypeScript -- the ESLint packages are optional but nice to have.
+I built extension for personal use and prioritized simplicity and use of modern ECMAScript/TypeScript over importing external libraries and packages. The only real dependencies for this project are npm and TypeScript.
 
 I also don't care about backwards compatibility with older browsers for this project. Setting up transpiling to older versions of ECMAScript/JavaScript wouldn't have been that much more difficult, but I didn't want to transpile things if I didn't have to. I fully expect users of this extension (primarily myself) be running modern web browsers.
 
