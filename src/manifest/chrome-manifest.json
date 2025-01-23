@@ -8,7 +8,6 @@
     "96": "icon.svg"
   },
   "action": {
-    "browser_style": true,
     "default_popup": "html/popup.html",
     "default_icon": "icon.svg"
   },
