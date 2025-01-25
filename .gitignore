@@ -3,3 +3,5 @@
 node_modules
 extension/js
 extension/manifest.json
+stash-extension.chrome.zip
+stash-extension.firefox.xpi
