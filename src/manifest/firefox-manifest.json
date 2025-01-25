@@ -16,10 +16,17 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["js/Background.js"],
+    "scripts": [
+      "js/Background.js"
+    ],
     "type": "module"
   },
-  "permissions": ["downloads", "notifications", "storage", "tabs"],
+  "permissions": [
+    "downloads",
+    "notifications",
+    "storage",
+    "tabs"
+  ],
   "commands": {
     "add": {
       "suggested_key": {
@@ -42,7 +49,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "scrape@dummy.com"
+      "id": "stash@dummy.com"
     }
   }
 }
